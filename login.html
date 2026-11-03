@@ -14,6 +14,9 @@
 body{font-family:Inter,sans-serif}.auth-bg{background:radial-gradient(circle at 15% 10%,#e8f2ff 0,transparent 38%),radial-gradient(circle at 90% 90%,#eaf8ef 0,transparent 35%),#f8fafc}
 .auth-input{width:100%;border:1px solid #d1d5db;border-radius:12px;padding:10px 12px;font-size:14px;outline:none;background:#fff;transition:border-color .2s,box-shadow .2s}
 .auth-input:focus{border-color:#0056b3;box-shadow:0 0 0 3px rgb(0 86 179 / .12)}
+.role-option{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #d1d5db;border-radius:12px;background:#fff;cursor:pointer;transition:.2s}
+.role-option:has(input:checked){border-color:#0056b3;background:#eff6ff;box-shadow:0 0 0 1px #0056b3}
+.role-option input{accent-color:#0056b3}
 
 
 
@@ -33,6 +36,14 @@ body{font-family:Inter,sans-serif}.auth-bg{background:radial-gradient(circle at 
 <button id="signupTab" type="button" class="rounded-lg py-2.5 text-sm font-semibold text-gray-500" aria-selected="false">Sign Up</button>
 </div>
 <form id="authForm" class="space-y-3">
+<div id="roleField" class="hidden">
+<label class="block text-xs font-bold text-gray-600 mb-2">I want to register as</label>
+<div class="grid grid-cols-2 gap-3">
+<label class="role-option"><input type="radio" name="role" value="customer" required><span class="text-sm font-semibold text-gray-800">User</span></label>
+<label class="role-option"><input type="radio" name="role" value="provider" required><span class="text-sm font-semibold text-gray-800">Provider</span></label>
+</div>
+<p class="mt-1.5 text-[11px] text-gray-500">Choose the account type you want to create.</p>
+</div>
 <div id="nameField" class="hidden">
 <label for="fullName" class="block text-xs font-bold text-gray-600 mb-1.5">Full name</label>
 <input id="fullName" name="name" autocomplete="name" class="auth-input" placeholder="Enter your full name">
@@ -63,14 +74,14 @@ body{font-family:Inter,sans-serif}.auth-bg{background:radial-gradient(circle at 
 <div data-shared-component="footer"></div>
 <script src="/assets/js/layout.js?v=20261101"></script>
 <script>
-const loginTab=document.getElementById('loginTab'),signupTab=document.getElementById('signupTab'),nameField=document.getElementById('nameField'),confirmField=document.getElementById('confirmField'),termsField=document.getElementById('termsField'),forgotLink=document.getElementById('forgotLink'),formTitle=document.getElementById('formTitle'),submitLabel=document.getElementById('submitLabel'),password=document.getElementById('password'),confirmPassword=document.getElementById('confirmPassword'),notice=document.getElementById('notice');
+const loginTab=document.getElementById('loginTab'),signupTab=document.getElementById('signupTab'),nameField=document.getElementById('nameField'),roleField=document.getElementById('roleField'),confirmField=document.getElementById('confirmField'),termsField=document.getElementById('termsField'),forgotLink=document.getElementById('forgotLink'),formTitle=document.getElementById('formTitle'),submitLabel=document.getElementById('submitLabel'),password=document.getElementById('password'),confirmPassword=document.getElementById('confirmPassword'),notice=document.getElementById('notice');
 let mode='login';
 function setMode(next){
   mode=next;const signup=mode==='signup';
   loginTab.className=signup?'rounded-lg py-2.5 text-sm font-semibold text-gray-500':'rounded-lg bg-white py-2.5 text-sm font-bold text-gbBlue shadow-sm';
   signupTab.className=signup?'rounded-lg bg-white py-2.5 text-sm font-bold text-gbBlue shadow-sm':'rounded-lg py-2.5 text-sm font-semibold text-gray-500';
   loginTab.setAttribute('aria-selected',String(!signup));signupTab.setAttribute('aria-selected',String(signup));
-  nameField.classList.toggle('hidden',!signup);confirmField.classList.toggle('hidden',!signup);
+  nameField.classList.toggle('hidden',!signup);roleField.classList.toggle('hidden',!signup);roleField.querySelectorAll('input[name="role"]').forEach(input=>input.required=signup);confirmField.classList.toggle('hidden',!signup);
   termsField.classList.toggle('hidden',!signup);termsField.classList.toggle('flex',signup);
   document.getElementById('fullName').required=signup;confirmPassword.required=signup;
   document.getElementById('terms').required=signup;password.autocomplete=signup?'new-password':'current-password';
@@ -90,14 +101,14 @@ document.getElementById('authForm').addEventListener('submit',event=>{
   event.preventDefault();
   if(!event.currentTarget.reportValidity())return;
   if(mode==='signup'&&password.value!==confirmPassword.value){showBackendNotice('Your passwords do not match.');return;}
-  showBackendNotice('Authentication is not connected yet. Once the backend is enabled, GBbooking will verify your account and automatically open the correct customer, provider or administrator dashboard.');
+  const selectedRole=document.querySelector('input[name="role"]:checked')?.value;\n  showBackendNotice(mode==='signup'?'Registration form is ready. The selected account type ('+(selectedRole==='provider'?'Provider':'User')+') will be saved when backend registration is connected.':'Login form is ready. After backend authentication is connected, your saved account role will determine the correct dashboard automatically.');
 });
 document.getElementById('googleButton').addEventListener('click',()=>{
-  showBackendNotice('Google authentication will be available after the authentication provider is connected. Your account role will be detected automatically after sign-in.');
+  showBackendNotice('Google authentication will be available after the authentication provider is connected. For new registrations, choose User or Provider in the sign-up form first.');
 });
 forgotLink.addEventListener('click',event=>{
   event.preventDefault();showBackendNotice('Password reset will be available after backend authentication is connected.');
 });
-</script>>
+</script>
 </body>
 </html>

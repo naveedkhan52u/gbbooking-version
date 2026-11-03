@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0056b3">
+<title>Provider Dashboard | GBbooking.com</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{colors:{gbBlue:'#0056b3',gbBlueDark:'#004085',gbGreen:'#28a745',gbOrange:'#f97316'}}}}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/shared-layout.css?v=20261101-provider">
+<style>
+body{font-family:Inter,sans-serif}.provider-card{background:#fff;border:1px solid #e5e7eb;border-radius:1rem;box-shadow:0 2px 8px rgb(15 23 42 / .03)}.metric-icon{width:2.75rem;height:2.75rem;display:flex;align-items:center;justify-content:center;border-radius:.9rem;flex-shrink:0}.booking-status{display:inline-flex;align-items:center;gap:.35rem;padding:.35rem .65rem;border-radius:999px;font-size:.68rem;font-weight:800}.pending{background:#fff7ed;color:#c2410c}.confirmed{background:#eff6ff;color:#1d4ed8}.completed{background:#ecfdf5;color:#047857}.cancelled{background:#fef2f2;color:#b91c1c}.field{width:100%;border:1px solid #d1d5db;border-radius:.7rem;background:#fff;padding:.7rem .8rem;font-size:.875rem;color:#1f2937;outline:none}.field:focus{border-color:#0056b3;box-shadow:0 0 0 3px rgb(0 86 179 / .1)}.field-label{display:block;font-size:.75rem;font-weight:700;color:#374151;margin-bottom:.4rem}.action-btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border-radius:.65rem;padding:.6rem .85rem;font-size:.75rem;font-weight:800;transition:.15s}.modal-backdrop{background:rgb(15 23 42 / .58);backdrop-filter:blur(3px)}.image-preview{width:4.5rem;height:4.5rem;border:1px solid #e5e7eb;border-radius:.7rem;object-fit:cover}
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+<div data-shared-component="header"></div>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-9">
+<header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-7">
+<div><div class="flex items-center gap-2"><span class="text-xs font-extrabold uppercase tracking-wider text-gbBlue">Provider workspace</span><span class="rounded-full bg-amber-50 text-amber-700 px-2 py-1 text-[10px] font-bold">Demo mode</span></div><h1 class="mt-1 text-2xl sm:text-3xl font-extrabold text-gray-900">Welcome, <span id="providerName">Provider</span></h1><p class="mt-1 text-sm text-gray-500">Manage your bookings, earnings and service listings.</p></div>
+<button id="openServiceForm" type="button" class="inline-flex items-center justify-center gap-2 rounded-xl bg-gbBlue hover:bg-gbBlueDark text-white px-4 py-3 text-sm font-extrabold shadow-sm"><i class="fa-solid fa-plus"></i> Add Services</button>
+</header>
+
+<section aria-label="Provider overview" class="mb-8">
+<div class="flex items-center justify-between mb-3"><div><h2 class="text-lg font-extrabold text-gray-900">Overview</h2><p class="text-xs text-gray-500 mt-1">Your booking and earnings summary</p></div><span class="text-[11px] text-gray-400">Updated from demo activity</span></div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<article class="provider-card p-4 flex items-center gap-3"><span class="metric-icon bg-blue-50 text-gbBlue"><i class="fa-solid fa-calendar-check text-lg"></i></span><div><p class="text-xs text-gray-500 font-medium">Total Booking</p><p id="totalBookings" class="text-2xl font-extrabold text-gray-900">0</p><p class="text-[10px] text-gray-400">All booking requests</p></div></article>
+<article class="provider-card p-4 flex items-center gap-3"><span class="metric-icon bg-emerald-50 text-emerald-600"><i class="fa-solid fa-wallet text-lg"></i></span><div><p class="text-xs text-gray-500 font-medium">Total Earning</p><p id="totalEarnings" class="text-2xl font-extrabold text-gray-900">PKR 0</p><p class="text-[10px] text-gray-400">Completed booking value</p></div></article>
+<article class="provider-card p-4 flex items-center gap-3"><span class="metric-icon bg-orange-50 text-orange-600"><i class="fa-solid fa-percent text-lg"></i></span><div><p class="text-xs text-gray-500 font-medium">Commission (10%)</p><p id="totalCommission" class="text-2xl font-extrabold text-gray-900">PKR 0</p><p class="text-[10px] text-gray-400">Platform commission on completed work</p></div></article>
+</div>
+</section>
+
+<section class="mb-8" aria-labelledby="newBookingsTitle">
+<div class="flex items-end justify-between gap-3 mb-4"><div><h2 id="newBookingsTitle" class="text-lg sm:text-xl font-extrabold text-gray-900">New Bookings</h2><p class="text-xs text-gray-500 mt-1">Requests waiting for your response</p></div><span id="newBookingCount" class="text-xs font-bold text-gray-500">0 bookings</span></div>
+<div id="newBookings" class="grid lg:grid-cols-2 gap-4"></div>
+<div id="newBookingsEmpty" class="hidden provider-card border-dashed p-9 text-center"><i class="fa-regular fa-calendar text-2xl text-gray-300"></i><p class="mt-2 text-sm font-bold text-gray-600">No new booking requests</p><p class="mt-1 text-xs text-gray-400">New pending requests will appear here.</p></div>
+</section>
+
+<section class="mb-8" aria-labelledby="acceptedBookingsTitle">
+<div class="flex items-end justify-between gap-3 mb-4"><div><h2 id="acceptedBookingsTitle" class="text-lg sm:text-xl font-extrabold text-gray-900">Accepted Bookings</h2><p class="text-xs text-gray-500 mt-1">Bookings you have confirmed</p></div><span id="acceptedBookingCount" class="text-xs font-bold text-gray-500">0 bookings</span></div>
+<div id="acceptedBookings" class="grid lg:grid-cols-2 gap-4"></div>
+<div id="acceptedBookingsEmpty" class="hidden provider-card border-dashed p-9 text-center"><i class="fa-solid fa-clipboard-check text-2xl text-gray-300"></i><p class="mt-2 text-sm font-bold text-gray-600">No accepted bookings</p><p class="mt-1 text-xs text-gray-400">Accepted bookings will appear here.</p></div>
+</section>
+
+<section aria-labelledby="bookingHistoryTitle">
+<div class="flex items-end justify-between gap-3 mb-4"><div><h2 id="bookingHistoryTitle" class="text-lg sm:text-xl font-extrabold text-gray-900">Booking History</h2><p class="text-xs text-gray-500 mt-1">Services marked as completed</p></div><span id="historyBookingCount" class="text-xs font-bold text-gray-500">0 completed</span></div>
+<div id="bookingHistory" class="grid lg:grid-cols-2 gap-4"></div>
+<div id="bookingHistoryEmpty" class="hidden provider-card border-dashed p-9 text-center"><i class="fa-solid fa-clock-rotate-left text-2xl text-gray-300"></i><p class="mt-2 text-sm font-bold text-gray-600">No completed bookings yet</p><p class="mt-1 text-xs text-gray-400">Completed bookings will be listed here.</p></div>
+</section>
+<p class="mt-8 text-center text-[11px] text-gray-400">Demo provider dashboard. Changes are saved in this browser only. Live booking data and service verification will be connected to Supabase later.</p>
+</main>
+
+<!-- Add service modal -->
+<div id="serviceModal" class="fixed inset-0 z-[1100] hidden items-center justify-center p-3 sm:p-5 modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="serviceModalTitle">
+<div class="w-full max-w-2xl max-h-[94vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
+<div class="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-gray-100 bg-white px-5 py-4 sm:px-6">
+<div><h2 id="serviceModalTitle" class="text-lg font-extrabold text-gray-900">List a Service</h2><p class="mt-0.5 text-xs text-gray-500">Submit your details for admin verification.</p></div>
+<button id="closeServiceForm" type="button" class="w-9 h-9 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" aria-label="Close form"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<form id="serviceForm" class="p-5 sm:p-6 space-y-4">
+<div class="rounded-xl border border-blue-100 bg-blue-50 p-3 text-xs leading-5 text-blue-800"><i class="fa-solid fa-shield-halved mr-1"></i> Your service will remain unpublished until an admin reviews and approves it.</div>
+<div><label class="field-label" for="serviceName">Name of Service <span class="text-red-500">*</span></label><input class="field" id="serviceName" name="serviceName" required maxlength="100" placeholder="e.g. Home Electrical Repair"></div>
+<div><label class="field-label" for="serviceCategory">Service Category <span class="text-red-500">*</span></label><select class="field" id="serviceCategory" name="serviceCategory" required><option value="">Choose a category</option><optgroup label="Accommodation"><option>Hotels & Resorts</option><option>Guest Houses</option><option>Student Hostels</option><option>Rooms & Short Stays</option></optgroup><optgroup label="Transport & Rentals"><option>Car Rentals</option><option>4x4 Jeep Rentals</option><option>Airport & Private Transfers</option><option>Local Transport</option></optgroup><optgroup label="Tours & Experiences"><option>Tour Packages</option><option>Trekking & Hiking Guides</option><option>Local Guides</option><option>Sightseeing & Experiences</option></optgroup><optgroup label="Events & Venues"><option>Wedding Halls</option><option>Event Venues & Marquees</option><option>Meeting & Conference Spaces</option></optgroup><optgroup label="Home Services"><option>Plumbing Services</option><option>Electrical Work</option><option>Home Repair & Maintenance</option><option>Cleaning Services</option><option>Painting Services</option><option>Other Household Services</option></optgroup></select></div>
+<div class="grid sm:grid-cols-2 gap-3">
+<div><label class="field-label" for="whatsappNumber">WhatsApp Number <span class="text-red-500">*</span></label><div class="relative"><input class="field" id="whatsappNumber" name="whatsappNumber" type="tel" inputmode="numeric" pattern="92[0-9]{10}" maxlength="12" placeholder="923001234567" required></div><p class="mt-1 text-[10px] text-gray-400">Enter 12 digits starting with 92.</p></div>
+<div><label class="field-label" for="phoneNumber">Phone Number <span class="text-red-500">*</span></label><div class="relative"><input class="field" id="phoneNumber" name="phoneNumber" type="tel" inputmode="numeric" pattern="92[0-9]{10}" maxlength="12" placeholder="923001234567" required></div><p class="mt-1 text-[10px] text-gray-400">Enter 12 digits starting with 92.</p></div>
+</div>
+<div><label class="field-label" for="serviceRegion">Choose Region <span class="text-red-500">*</span></label><select class="field" id="serviceRegion" name="region" required><option value="">Select your service region</option><option value="Gilgit">Gilgit City</option><option value="Skardu">Skardu & Baltistan</option><option value="Hunza">Hunza Valley</option><option value="Ghizer">Ghizer (Phander)</option><option value="Diamer">Diamer (Chilas)</option><option value="Nagar">Nagar Valley</option><option value="Ghanche">Ghanche (Khaplu)</option><option value="Astore">Astore & Rama</option></select></div>
+<div><label class="field-label" for="serviceAddress">Complete Address (Area / City) <span class="text-red-500">*</span></label><input class="field" id="serviceAddress" name="address" required maxlength="180" placeholder="e.g. Jutial, Gilgit"></div>
+<div><label class="field-label" for="providerCnic">CNIC Number <span class="text-red-500">*</span></label><input class="field" id="providerCnic" name="cnic" type="text" inputmode="numeric" pattern="[0-9]{13}" maxlength="13" minlength="13" required placeholder="13 digit CNIC without dashes"><p class="mt-1 text-[10px] text-gray-400">Enter exactly 13 digits, without dashes.</p></div>
+<div><label class="field-label" for="servicePrice">Price (PKR) <span class="text-red-500">*</span></label><div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-500">PKR</span><input class="field pl-14" id="servicePrice" name="price" type="number" inputmode="numeric" min="1" step="1" required placeholder="Enter your service price"></div></div>
+<div><span class="field-label">Charging Type <span class="text-red-500">*</span></span><p class="text-[10px] text-gray-400 mb-2">Select one or more ways customers can be charged.</p><div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+<label class="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-3 text-xs font-semibold text-gray-700 cursor-pointer hover:border-blue-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"><input class="charging-type accent-blue-600" type="checkbox" name="chargingType" value="Per Day"><span>Per Day</span></label>
+<label class="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-3 text-xs font-semibold text-gray-700 cursor-pointer hover:border-blue-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"><input class="charging-type accent-blue-600" type="checkbox" name="chargingType" value="Per Hour"><span>Per Hour</span></label>
+<label class="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-3 text-xs font-semibold text-gray-700 cursor-pointer hover:border-blue-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"><input class="charging-type accent-blue-600" type="checkbox" name="chargingType" value="Per Night"><span>Per Night</span></label>
+<label class="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-3 text-xs font-semibold text-gray-700 cursor-pointer hover:border-blue-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"><input class="charging-type accent-blue-600" type="checkbox" name="chargingType" value="Per Month"><span>Per Month</span></label>
+</div><p class="mt-1 text-[10px] text-gray-400">Choose the applicable charging type(s) for this service.</p></div>
+<div><label class="field-label" for="serviceImages">Upload Service Images <span class="text-red-500">*</span></label><input class="field" id="serviceImages" name="images" type="file" accept="image/*" multiple required><p class="mt-1 text-[10px] text-gray-400">Upload at least 1 image and no more than 2 images.</p><div id="imagePreview" class="flex gap-2 mt-3"></div></div>
+<div id="serviceFormNotice" class="hidden rounded-xl px-3 py-2.5 text-xs font-semibold" role="status"></div>
+<div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-gray-100 pt-4">
+<button id="cancelServiceForm" type="button" class="action-btn border border-gray-200 text-gray-600 hover:bg-gray-50">Cancel</button>
+<button type="submit" class="action-btn bg-gbBlue hover:bg-gbBlueDark text-white px-5 py-3"><i class="fa-solid fa-paper-plane"></i> Submit for Admin Verification</button>
+</div>
+</form>
+</div>
+</div>
+
+<div data-shared-component="mobile-bottom-nav"></div>
+<div data-shared-component="footer"></div>
+<script src="/assets/js/layout.js?v=20261101"></script>
+<script>
+(function(){
+const name=localStorage.getItem('gbbooking_demo_name')||'Provider';
+document.getElementById('providerName').textContent=name;
+const bookingKey='gbbooking_provider_demo_bookings';
+const serviceKey='gbbooking_provider_demo_services';
+const seeded=[
+{id:'GB-P1048',customer:'Ahsan Ali',phone:'923001234567',service:'Home Electrical Repair',location:'Jutial, Gilgit',date:'Nov 04, 2026',time:'10:00 AM',amount:4500,status:'Pending'},
+{id:'GB-P1042',customer:'Sara Karim',phone:'923451234567',service:'Airport Transfer',location:'Skardu Airport',date:'Nov 06, 2026',time:'02:30 PM',amount:8500,status:'Pending'},
+{id:'GB-P1037',customer:'Hamza Khan',phone:'923331234567',service:'Guest House Stay',location:'Karimabad, Hunza',date:'Nov 02, 2026',time:'Check-in 2:00 PM',amount:12000,status:'Confirmed'},
+{id:'GB-P0982',customer:'Maryam Shah',phone:'923001112233',service:'Plumbing Repair',location:'Sakwar, Gilgit',date:'Oct 20, 2026',time:'11:00 AM',amount:3000,status:'Completed'}
+];
+let bookings;
+try{const saved=JSON.parse(localStorage.getItem(bookingKey));bookings=Array.isArray(saved)?saved:seeded;}catch(_){bookings=seeded;}
+function saveBookings(){localStorage.setItem(bookingKey,JSON.stringify(bookings));}
+function money(value){return 'PKR '+Number(value||0).toLocaleString('en-PK');}
+function escapeHTML(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+function bookingCard(b,section){
+const badge=b.status.toLowerCase();let actions='';
+if(section==='new')actions='<button type="button" data-action="accept" data-id="'+escapeHTML(b.id)+'" class="action-btn bg-gbBlue hover:bg-gbBlueDark text-white"><i class="fa-solid fa-check"></i> Accept</button><button type="button" data-action="cancel" data-id="'+escapeHTML(b.id)+'" class="action-btn border border-red-200 text-red-600 hover:bg-red-50"><i class="fa-solid fa-xmark"></i> Cancel</button>';
+if(section==='accepted')actions='<button type="button" data-action="complete" data-id="'+escapeHTML(b.id)+'" class="action-btn bg-emerald-600 hover:bg-emerald-700 text-white"><i class="fa-solid fa-check-double"></i> Mark as Completed</button>';
+return '<article class="provider-card p-4 sm:p-5"><div class="flex items-start justify-between gap-3"><div class="min-w-0"><p class="text-[10px] font-extrabold tracking-wider text-gray-400 uppercase">'+escapeHTML(b.id)+'</p><h3 class="mt-1 text-sm font-extrabold text-gray-900">'+escapeHTML(b.service)+'</h3><p class="mt-1 text-xs text-gray-500">Customer: <span class="font-semibold text-gray-700">'+escapeHTML(b.customer)+'</span></p></div><span class="booking-status '+badge+'">'+escapeHTML(b.status)+'</span></div><div class="grid grid-cols-2 gap-3 mt-4 border-t border-gray-100 pt-3"><div><p class="text-[10px] uppercase tracking-wide text-gray-400">Date & time</p><p class="mt-1 text-xs font-semibold text-gray-700">'+escapeHTML(b.date)+' · '+escapeHTML(b.time)+'</p></div><div><p class="text-[10px] uppercase tracking-wide text-gray-400">Booking amount</p><p class="mt-1 text-sm font-extrabold text-gray-900">'+money(b.amount)+'</p></div><div class="col-span-2"><p class="text-[10px] uppercase tracking-wide text-gray-400">Location</p><p class="mt-1 text-xs font-semibold text-gray-700"><i class="fa-solid fa-location-dot text-gbOrange mr-1"></i>'+escapeHTML(b.location)+'</p></div><div class="col-span-2"><p class="text-[10px] uppercase tracking-wide text-gray-400">Customer phone</p><p class="mt-1 text-xs font-semibold text-gray-700">'+escapeHTML(b.phone)+'</p></div></div>'+(actions?'<div class="flex flex-wrap gap-2 mt-4 border-t border-gray-100 pt-3">'+actions+'</div>':'')+'</article>';
+}
+function renderList(id,emptyId,items,section){document.getElementById(id).innerHTML=items.map(b=>bookingCard(b,section)).join('');document.getElementById(emptyId).classList.toggle('hidden',items.length>0);}
+function render(){
+const pending=bookings.filter(b=>b.status==='Pending'),accepted=bookings.filter(b=>b.status==='Confirmed'),completed=bookings.filter(b=>b.status==='Completed');
+renderList('newBookings','newBookingsEmpty',pending,'new');renderList('acceptedBookings','acceptedBookingsEmpty',accepted,'accepted');renderList('bookingHistory','bookingHistoryEmpty',completed,'history');
+document.getElementById('newBookingCount').textContent=pending.length+' booking'+(pending.length===1?'':'s');document.getElementById('acceptedBookingCount').textContent=accepted.length+' booking'+(accepted.length===1?'':'s');document.getElementById('historyBookingCount').textContent=completed.length+' completed';
+const gross=completed.reduce((sum,b)=>sum+Number(b.amount||0),0);document.getElementById('totalBookings').textContent=bookings.length;document.getElementById('totalEarnings').textContent=money(gross);document.getElementById('totalCommission').textContent=money(gross*.10);
+}
+document.querySelector('main').addEventListener('click',e=>{
+const button=e.target.closest('[data-action]');if(!button)return;
+const booking=bookings.find(b=>b.id===button.dataset.id);if(!booking)return;
+if(button.dataset.action==='accept'&&booking.status==='Pending'){booking.status='Confirmed';}
+else if(button.dataset.action==='cancel'&&booking.status==='Pending'){if(!confirm('Cancel this booking request?'))return;booking.status='Cancelled';}
+else if(button.dataset.action==='complete'&&booking.status==='Confirmed'){if(!confirm('Mark this booking as completed?'))return;booking.status='Completed';}
+saveBookings();render();
+});
+
+const modal=document.getElementById('serviceModal'),form=document.getElementById('serviceForm'),imageInput=document.getElementById('serviceImages'),preview=document.getElementById('imagePreview'),notice=document.getElementById('serviceFormNotice');
+function openModal(){modal.classList.remove('hidden');modal.classList.add('flex');document.body.style.overflow='hidden';document.getElementById('serviceName').focus();}
+function closeModal(){modal.classList.add('hidden');modal.classList.remove('flex');document.body.style.overflow='';}
+document.getElementById('openServiceForm').addEventListener('click',openModal);document.getElementById('closeServiceForm').addEventListener('click',closeModal);document.getElementById('cancelServiceForm').addEventListener('click',closeModal);modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.classList.contains('hidden'))closeModal();});
+imageInput.addEventListener('change',()=>{
+preview.innerHTML='';const files=Array.from(imageInput.files||[]);if(files.length>2){imageInput.setCustomValidity('Please choose no more than 2 images.');imageInput.reportValidity();imageInput.value='';return;}imageInput.setCustomValidity('');
+files.forEach(file=>{if(!file.type.startsWith('image/'))return;const url=URL.createObjectURL(file);const img=document.createElement('img');img.src=url;img.alt='Selected service image';img.className='image-preview';img.onload=()=>URL.revokeObjectURL(url);preview.appendChild(img);});
+});
+['whatsappNumber','phoneNumber','providerCnic'].forEach(id=>document.getElementById(id).addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'');}));
+form.addEventListener('submit',e=>{
+e.preventDefault();notice.className='hidden';
+if(!form.reportValidity())return;
+const files=Array.from(imageInput.files||[]);if(files.length<1||files.length>2){notice.textContent='Please upload at least 1 and no more than 2 images.';notice.className='block rounded-xl bg-red-50 px-3 py-2.5 text-xs font-semibold text-red-700';return;}
+if(!/^92\d{10}$/.test(document.getElementById('whatsappNumber').value)||!/^92\d{10}$/.test(document.getElementById('phoneNumber').value)){notice.textContent='Both phone numbers must contain 12 digits and start with 92.';notice.className='block rounded-xl bg-red-50 px-3 py-2.5 text-xs font-semibold text-red-700';return;}
+if(!/^\d{13}$/.test(document.getElementById('providerCnic').value)){notice.textContent='CNIC must contain exactly 13 digits.';notice.className='block rounded-xl bg-red-50 px-3 py-2.5 text-xs font-semibold text-red-700';return;}
+const price=Number(document.getElementById('servicePrice').value);
+if(!Number.isInteger(price)||price<1){notice.textContent='Please enter a valid service price in PKR.';notice.className='block rounded-xl bg-red-50 px-3 py-2.5 text-xs font-semibold text-red-700';return;}
+const chargingTypes=Array.from(document.querySelectorAll('input[name="chargingType"]:checked')).map(input=>input.value);
+if(chargingTypes.length===0){notice.textContent='Please select at least one charging type.';notice.className='block rounded-xl bg-red-50 px-3 py-2.5 text-xs font-semibold text-red-700';return;}
+const service={id:'SRV-'+Date.now(),name:document.getElementById('serviceName').value.trim(),category:document.getElementById('serviceCategory').value,pricePKR:price,chargingTypes:chargingTypes,whatsapp:document.getElementById('whatsappNumber').value,phone:document.getElementById('phoneNumber').value,region:document.getElementById('serviceRegion').value,address:document.getElementById('serviceAddress').value.trim(),imageNames:files.map(f=>f.name),status:'Pending admin verification',submittedAt:new Date().toISOString()};
+let services=[];try{services=JSON.parse(localStorage.getItem(serviceKey))||[];}catch(_){}
+services.push(service);localStorage.setItem(serviceKey,JSON.stringify(services));
+// CNIC is validated but deliberately not saved in browser storage.
+notice.textContent='Service submitted for admin verification. It will not be visible publicly until approved.';notice.className='block rounded-xl bg-emerald-50 border border-emerald-100 px-3 py-2.5 text-xs font-semibold text-emerald-800';
+form.reset();preview.innerHTML='';setTimeout(()=>{closeModal();notice.className='hidden';},2200);
+});
+render();
+})();
+</script>
+</body>
+</html>

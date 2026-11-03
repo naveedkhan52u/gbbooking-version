@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0056b3">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Administrator Login | GBbooking</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{colors:{gbBlue:'#0056b3',gbBlueDark:'#004085'}}}}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/assets/css/shared-layout.css?v=20261101-admin">
+<style>
+*{box-sizing:border-box}body{font-family:Inter, sans-serif}.admin-bg{background:radial-gradient(circle at 12% 12%,#e6f1ff 0,transparent 36%),radial-gradient(circle at 90% 88%,#e8f7ee 0,transparent 34%),#f7f9fc}.admin-input{width:100%;border:1px solid #d1d5db;border-radius:12px;padding:12px 14px;font-size:14px;background:#fff;outline:none;transition:.2s}.admin-input:focus{border-color:#0056b3;box-shadow:0 0 0 3px rgb(0 86 179 / .12)}
+</style>
+</head>
+<body class="admin-bg min-h-screen flex flex-col text-gray-800"><div data-shared-component="header"></div>
+<main class="w-full max-w-md mx-auto flex-1 flex flex-col justify-center px-4 py-10 pb-24 lg:pb-10">
+<div class="text-center mb-6">
+<img src="/assets/brand/Logo.png" alt="GBbooking.com" class="h-14 w-auto max-w-[220px] object-contain mx-auto">
+<p class="mt-4 text-[11px] font-extrabold uppercase tracking-[.2em] text-gbBlue">Restricted access</p>
+<h1 class="mt-2 text-2xl font-extrabold text-gray-900">Administrator Login</h1>
+<p class="mt-1 text-sm text-gray-500">Sign in to the GBbooking administration portal.</p>
+</div>
+<section class="rounded-2xl border border-gray-200 bg-white p-5 sm:p-7 shadow-xl shadow-gray-200/60">
+<div class="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50 p-3 mb-5">
+<span class="w-10 h-10 rounded-lg bg-white text-gbBlue flex items-center justify-center"><i class="fa-solid fa-shield-halved text-lg"></i></span>
+<div><p class="text-sm font-bold text-blue-900">Secure admin area</p><p class="text-[11px] text-blue-700 mt-0.5">Authorized administrators only</p></div>
+</div>
+<form id="adminLoginForm" class="space-y-4" autocomplete="on">
+<div><label for="adminEmail" class="block text-xs font-bold text-gray-700 mb-1.5">Admin email address</label><input class="admin-input" id="adminEmail" name="email" type="email" autocomplete="username" placeholder="admin@example.com" required></div>
+<div><div class="flex items-center justify-between mb-1.5"><label for="adminPassword" class="block text-xs font-bold text-gray-700">Password</label></div><div class="relative"><input class="admin-input pr-12" id="adminPassword" name="password" type="password" autocomplete="current-password" placeholder="Enter admin password" required><button id="toggleAdminPassword" type="button" class="absolute inset-y-0 right-0 px-4 text-gray-500 hover:text-gbBlue" aria-label="Show password"><i class="fa-regular fa-eye"></i></button></div></div>
+<button type="submit" class="w-full rounded-xl bg-gbBlue hover:bg-gbBlueDark text-white py-3 font-extrabold text-sm shadow-md transition active:scale-[.99]"><i class="fa-solid fa-right-to-bracket mr-2"></i>Sign In to Admin</button>
+<p id="adminNotice" class="hidden rounded-xl border px-3 py-2.5 text-xs leading-5" role="status" aria-live="polite"></p>
+</form>
+<div class="mt-5 border-t border-gray-100 pt-4 text-center"><p class="text-[11px] text-gray-400"><i class="fa-solid fa-lock mr-1"></i> This page is not linked from the public website.</p></div>
+</section>
+<p class="mt-5 text-center text-[11px] text-gray-400">GBbooking.com · Administration Portal</p>
+</main>
+<script>
+const form=document.getElementById('adminLoginForm');
+const notice=document.getElementById('adminNotice');
+document.getElementById('toggleAdminPassword').addEventListener('click',()=>{
+const input=document.getElementById('adminPassword'),button=document.getElementById('toggleAdminPassword');
+const show=input.type==='password';input.type=show?'text':'password';
+button.innerHTML='<i class="fa-regular '+(show?'fa-eye-slash':'fa-eye')+'"></i>';
+button.setAttribute('aria-label',show?'Hide password':'Show password');
+});
+form.addEventListener('submit',event=>{
+event.preventDefault();
+if(!form.reportValidity())return;
+window.location.href='/admin/dashboard.html';
+});
+</script>
+<div data-shared-component="mobile-bottom-nav"></div><div data-shared-component="footer"></div><script src="/assets/js/layout.js?v=20261101-admin"></script></body>
+</html>

@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GBbooking.com - Booking Platform for Gilgit-Baltistan</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gbBlue: '#0056b3',
+                        gbBlueDark: '#004085',
+                        gbGreen: '#28a745',
+                        gbGreenDark: '#1e7e34',
+                        gbOrange: '#f97316',
+                        gbOrangeHover: '#ea580c'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .text-9px {
+            font-size: 9px !important;
+            line-height: 11px !important;
+        }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0056b3;
+            border-radius: 3px;
+        }
+        /* Horizontal Snap Scroll for Mobile Cards */
+        .mobile-snap-scroll {
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .mobile-snap-card {
+            scroll-snap-align: center;
+        }
+        /* Hide scrollbar for category row if needed */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<link rel="stylesheet" href="/assets/css/shared-layout.css?v=20261101-fix2">
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- SHARED MASTER HEADER + GUTENBERG DRAWER -->
+<div data-shared-component="header"></div>
+
+    <main id="home">
+
+        <!-- HERO SECTION & SEARCH BAR GRID (MOBILE/TABLET: BANNER FIRST, THEN SEARCH | LAPTOP: SEARCH ON LEFT, BANNER ON RIGHT) -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
+            <div class="flex flex-col lg:grid lg:grid-cols-12 gap-5 items-stretch">
+                
+                <!-- HERO SLIDER BANNER (FIRST ON MOBILE/TABLET VIA ORDER 1, RIGHT SIDE ON LAPTOP) -->
+                <div class="order-1 lg:order-2 lg:col-span-7 relative w-full overflow-hidden rounded-2xl shadow-sm bg-gray-900 text-white h-[240px] sm:h-[280px] lg:h-[320px] group">
+                    
+                    <!-- Horizontal Track Slider -->
+                    <div id="heroTrack" class="flex w-full h-full transition-transform duration-700 ease-in-out">
+                        
+                        <!-- Banner 1: Hotels & Stays -->
+                        <div class="min-w-full h-full relative flex items-center" style="background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;">
+                            <div class="px-5 sm:px-8 w-full max-w-2xl">
+                                <span class="inline-block bg-gbOrange text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full mb-2">Accommodation</span>
+                                <h1 class="text-xl sm:text-2xl lg:text-3xl font-extrabold leading-snug drop-shadow">
+                                    Luxury Hotels & Resorts in Gilgit & Skardu
+                                </h1>
+                                <p class="mt-1.5 text-xs sm:text-sm text-gray-200 line-clamp-2">
+                                    Book verified rooms, mountain views, and cozy stays at unbeatable rates.
+                                </p>
+                                <div class="mt-4">
+                                    <a href="#hotels" class="inline-flex items-center space-x-1.5 bg-gbGreen hover:bg-gbGreenDark text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition transform hover:scale-105">
+                                        <span>Book Hotel Now</span>
+                                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Banner 2: Transport & Car Rentals -->
+                        <div class="min-w-full h-full relative flex items-center" style="background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;">
+                            <div class="px-5 sm:px-8 w-full max-w-2xl">
+                                <span class="inline-block bg-gbBlue text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full mb-2">Transport & Travel</span>
+                                <h1 class="text-xl sm:text-2xl lg:text-3xl font-extrabold leading-snug drop-shadow">
+                                    4x4 Jeeps & Reliable Travel Rentals
+                                </h1>
+                                <p class="mt-1.5 text-xs sm:text-sm text-gray-200 line-clamp-2">
+                                    Traverse the Karakoram Highway, Deosai Plains, and Hunza Valley comfortably.
+                                </p>
+                                <div class="mt-4">
+                                    <a href="#transport" class="inline-flex items-center space-x-1.5 bg-gbGreen hover:bg-gbGreenDark text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition transform hover:scale-105">
+                                        <span>Reserve Vehicle</span>
+                                        <i class="fa-solid fa-car text-[10px]"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Banner 3: Tourism & Guided Expeditions -->
+                        <div class="min-w-full h-full relative flex items-center" style="background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;">
+                            <div class="px-5 sm:px-8 w-full max-w-2xl">
+                                <span class="inline-block bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full mb-2">Tours & Treks</span>
+                                <h1 class="text-xl sm:text-2xl lg:text-3xl font-extrabold leading-snug drop-shadow">
+                                    Explore Fairy Meadows & Passu Cones
+                                </h1>
+                                <p class="mt-1.5 text-xs sm:text-sm text-gray-200 line-clamp-2">
+                                    Guided local tour packages tailored for families, couples, and adventure lovers.
+                                </p>
+                                <div class="mt-4">
+                                    <a href="#tourism" class="inline-flex items-center space-x-1.5 bg-gbGreen hover:bg-gbGreenDark text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition transform hover:scale-105">
+                                        <span>View Tour Packages</span>
+                                        <i class="fa-solid fa-compass text-[10px]"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Banner 4: Event Halls & Conventions -->
+                        <div class="min-w-full h-full relative flex items-center" style="background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;">
+                            <div class="px-5 sm:px-8 w-full max-w-2xl">
+                                <span class="inline-block bg-purple-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full mb-2">Events & Marquees</span>
+                                <h1 class="text-xl sm:text-2xl lg:text-3xl font-extrabold leading-snug drop-shadow">
+                                    Grand Halls & Outdoor Venues
+                                </h1>
+                                <p class="mt-1.5 text-xs sm:text-sm text-gray-200 line-clamp-2">
+                                    Host unforgettable weddings, corporate seminars, and local summits in GB.
+                                </p>
+                                <div class="mt-4">
+                                    <a href="#events" class="inline-flex items-center space-x-1.5 bg-gbGreen hover:bg-gbGreenDark text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition transform hover:scale-105">
+                                        <span>Reserve Event Hall</span>
+                                        <i class="fa-solid fa-champagne-glasses text-[10px]"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Banner 5: Verified Home Services -->
+                        <div class="min-w-full h-full relative flex items-center" style="background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;">
+                            <div class="px-5 sm:px-8 w-full max-w-2xl">
+                                <span class="inline-block bg-amber-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full mb-2">On-Demand Local Care</span>
+                                <h1 class="text-xl sm:text-2xl lg:text-3xl font-extrabold leading-snug drop-shadow">
+                                    Trusted Electricians & Technicians
+                                </h1>
+                                <p class="mt-1.5 text-xs sm:text-sm text-gray-200 line-clamp-2">
+                                    Fast and dependable home maintenance services at your doorstep in Gilgit.
+                                </p>
+                                <div class="mt-4">
+                                    <a href="#home-services" class="inline-flex items-center space-x-1.5 bg-gbGreen hover:bg-gbGreenDark text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition transform hover:scale-105">
+                                        <span>Hire Specialist</span>
+                                        <i class="fa-solid fa-wrench text-[10px]"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Prev / Next Slider Arrows -->
+                    <button onclick="prevSlide()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center transition">
+                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                    </button>
+                    <button onclick="nextSlide()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center transition">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+
+                    <!-- Indicator Dots -->
+                    <div class="absolute bottom-3 left-0 right-0 z-20 flex justify-center space-x-1.5">
+                        <button class="dot w-2.5 h-2.5 rounded-full bg-white transition" onclick="setSlide(0)"></button>
+                        <button class="dot w-2.5 h-2.5 rounded-full bg-white/50 transition" onclick="setSlide(1)"></button>
+                        <button class="dot w-2.5 h-2.5 rounded-full bg-white/50 transition" onclick="setSlide(2)"></button>
+                        <button class="dot w-2.5 h-2.5 rounded-full bg-white/50 transition" onclick="setSlide(3)"></button>
+                        <button class="dot w-2.5 h-2.5 rounded-full bg-white/50 transition" onclick="setSlide(4)"></button>
+                    </div>
+                </div>
+
+                <!-- FIND THE SERVICES SEARCH SECTION (SECOND ON MOBILE/TABLET VIA ORDER 2, LEFT SIDE ON LAPTOP) -->
+                <div class="order-2 lg:order-1 lg:col-span-5 flex flex-col justify-center bg-white rounded-2xl shadow-sm border border-gray-200 p-5 sm:p-6">
+                    <div class="mb-4">
+                        <span class="text-xs font-extrabold text-gbOrange uppercase tracking-wider">Quick Search</span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight mt-0.5">Find Services in GB</h2>
+                        <p class="text-xs text-gray-500 mt-1">Book hotels, rides, local guides, and home repairs instantly.</p>
+                    </div>
+
+                    <form id="searchForm" onsubmit="event.preventDefault(); triggerSearch();" class="space-y-3.5">
+                        <!-- Search Input: Services Name -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Service Required</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                                </div>
+                                <input type="text" id="serviceInput" placeholder="Type Services Name (e.g. Jeep, Hotel)..." 
+                                    class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gbGreen focus:border-gbGreen text-xs sm:text-sm outline-none transition">
+                            </div>
+                        </div>
+
+                        <!-- Dropdown: Choose Area Name -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">Select Area / District</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fa-solid fa-location-dot text-xs"></i>
+                                </div>
+                                <select id="areaSelect" class="w-full pl-9 pr-8 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gbGreen focus:border-gbGreen text-xs sm:text-sm outline-none appearance-none bg-white transition">
+                                    <option value="">Choose Area Name (All GB)</option>
+                                    <option value="Gilgit">Gilgit City</option>
+                                    <option value="Skardu">Skardu & Baltistan</option>
+                                    <option value="Hunza">Hunza Valley</option>
+                                    <option value="Ghizer">Ghizer (Phander)</option>
+                                    <option value="Diamer">Diamer (Chilas)</option>
+                                    <option value="Nagar">Nagar Valley</option>
+                                    <option value="Ghanche">Ghanche (Khaplu)</option>
+                                    <option value="Astore">Astore & Rama</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Search Button (Matches GB Green Book Button Styling) -->
+                        <div class="pt-1">
+                            <button type="submit" class="w-full bg-gbGreen hover:bg-gbGreenDark text-white font-bold py-2.5 sm:py-3 px-6 rounded-xl shadow-md transition transform active:scale-95 flex items-center justify-center space-x-2 text-sm">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <span>Search Services</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- QUICK CATEGORIES SECTION (FORCED HORIZONTAL ROW LAYOUT ACROSS ALL DEVICES) -->
+        <section id="categories" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 mb-12 overflow-x-auto no-scrollbar">
+            <!-- Mobile/Tablet Layout: 2 Rows (Row 1: 4 items, Row 2: 3 items) | Desktop Layout: Centered 1 Single Row -->
+            <div class="flex flex-col lg:flex-row items-center justify-center gap-4 sm:gap-6 lg:gap-8 py-2 min-w-full">
+                
+                <!-- ROW 1 ON MOBILE/TABLET (4 Items) -->
+                <div class="flex flex-row items-center justify-center w-full lg:w-auto gap-3 sm:gap-6 lg:gap-8">
+                    <!-- 1. Home Services -->
+                    <a href="#home-services" class="group flex flex-col items-center flex-1 lg:flex-none">
+                        <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-blue-100 group-hover:bg-gbBlue text-gbBlue group-hover:text-white flex items-center justify-center shadow-sm transition-all duration-300 transform group-hover:scale-105">
+                            <i class="fa-solid fa-wrench text-base sm:text-xl"></i>
+                        </div>
+                        <span class="mt-1.5 text-9px font-bold text-gray-700 group-hover:text-gbBlue uppercase tracking-wide text-center">Home Services</span>
+                    </a>
+
+                    <!-- 2. Transport & Travel -->
+                    <a href="#transport" class="group flex flex-col items-center flex-1 lg:flex-none">
+                        <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-green-100 group-hover:bg-gbGreen text-gbGreen group-hover:text-white flex items-center justify-center shadow-sm transition-all duration-300 transform group-hover:scale-105">
+                            <i class="fa-solid fa-bus text-base sm:text-xl"></i>
+                        </div>
+                        <span class="mt-1.5 text-9px font-bold text-gray-700 group-hover:text-gbGreen uppercase tracking-wide text-center">Transport & Travel</span>
+                    </a>
+
+                    <!-- 3. Accommodation & Stay -->
+                    <a href="#accommodation" class="group flex flex-col items-center flex-1 lg:flex-none">
+                        <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-orange-100 group-hover:bg-gbOrange group-hover:text-white text-gbOrange flex items-center justify-center shadow-sm transition-all duration-300 transform group-hover:scale-105">
+                            <i class="fa-solid fa-house-chimney text-base sm:text-xl"></i>
+                        </div>
+                        <span class="mt-1.5 text-9px font-bold text-gray-700 group-hover:text-gbOrange uppercase tracking-wide text-center">Accommodation & Stay</span>
+                    </a>
+
+                    <!-- 4. Tourism -->
+                    <a href="#tourism" class="group flex flex-col items-center flex-1 lg:flex-none">
+                        <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-purple-100 group-hover:bg-purple-600 group-hover:text-white text-purple-600 flex items-center justify-center shadow-sm transition-all duration-300 transform group-hover:scale-105">
+                            <i class="fa-solid fa-mountain-sun text-base sm:text-xl"></i>
+                        </div>
+                        <span class="mt-1.5 text-9px font-bold text-gray-700 group-hover:text-purple-600 uppercase tracking-wide text-center">Tourism</span>
+                    </a>
+                </div>
+
+                <!-- ROW 2 ON MOBILE/TABLET (3 Items) -->
+                <div class="flex flex-row items-center justify-center w-full lg:w-auto gap-4 sm:gap-6 lg:gap-8">
+                    <!-- 5. Event Halls -->
+                    <a href="#events" class="group flex flex-col items-center flex-1 lg:flex-none max-w-[80px] sm:max-w-none">
+                        <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-pink-100 group-hover:bg-pink-600 group-hover:text-white text-pink-600 flex items-center justify-center shadow-sm transition-all duration-300 transform group-hover:scale-105">
+                            <i class="fa-solid fa-building-flag text-base sm:text-xl"></i>
+                        </div>
+                        <span class="mt-1.5 text-9px font-bold text-gray-700 group-hover:text-pink-600 uppercase tracking-wide text-center">Event Halls</span>
+                    </a>
+
+                    <!-- 6. Hotels Booking -->
+                    <a href="#hotels" class="group flex flex-col items-center flex-1 lg:flex-none max-w-[80px] sm:max-w-none">
+                        <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-teal-100 group-hover:bg-teal-600 group-hover:text-white text-teal-600 flex items-center justify-center shadow-sm transition-all duration-300 transform group-hover:scale-105">
+                            <i class="fa-solid fa-hotel text-base sm:text-xl"></i>
+                        </div>
+                        <span class="mt-1.5 text-9px font-bold text-gray-700 group-hover:text-teal-600 uppercase tracking-wide text-center">Hotels Booking</span>
+                    </a>
+
+                    <!-- 7. More (Label: More) -->
+                    <a href="#all-categories" onclick="showToast('Viewing all 25+ local service categories!')" class="group flex flex-col items-center flex-1 lg:flex-none max-w-[80px] sm:max-w-none">
+                        <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-gray-200 group-hover:bg-gray-800 group-hover:text-white text-gray-700 flex items-center justify-center shadow-sm transition-all duration-300 transform group-hover:scale-105">
+                            <i class="fa-solid fa-border-all text-base sm:text-xl"></i>
+                        </div>
+                        <span class="mt-1.5 text-9px font-bold text-gray-700 group-hover:text-gray-900 uppercase tracking-wide text-center">More</span>
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SERVICES BY CATEGORY SECTION -->
+        <div id="services" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 mb-16">
+
+            <!-- CATEGORY 1: HOTELS BOOKING -->
+            <section id="hotels" class="bg-white rounded-2xl p-4 sm:p-6 border border-gray-200 shadow-sm">
+                <div class="flex items-center justify-between pb-4 border-b mb-6">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center">
+                            <i class="fa-solid fa-hotel"></i>
+                        </div>
+                        <div>
+                            <!-- Category title 10px on mobile/tablet -->
+                            <h3 class="text-[10px] sm:text-xl font-bold text-gray-900 leading-tight">Hotels & Stay Providers</h3>
+                            <p class="text-[9px] sm:text-xs text-gray-500 hidden sm:block">Top rated hotels and resorts across Gilgit-Baltistan</p>
+                        </div>
+                    </div>
+                    <!-- View All button replacement -->
+                    <button onclick="showToast('Loading all Hotels & Stays')" class="text-[10px] sm:text-xs font-bold text-gbBlue hover:text-gbBlueDark border border-gbBlue/30 hover:border-gbBlue bg-blue-50 px-3 py-1.5 rounded-lg transition flex items-center space-x-1">
+                        <span>View All</span>
+                        <i class="fa-solid fa-chevron-right text-[8px]"></i>
+                    </button>
+                </div>
+
+                <!-- Provider Cards Layout: Swipe on Mobile/Tablet, 3 Grid on Desktop -->
+                <div class="flex md:grid md:grid-cols-3 gap-4 overflow-x-auto mobile-snap-scroll md:overflow-visible pb-3 md:pb-0">
+                    
+                    <!-- Provider Card 1 -->
+                    <div class="mobile-snap-card min-w-[85%] sm:min-w-[65%] md:min-w-0 bg-gray-50 rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="relative h-40 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=500&q=80" alt="Serena Hotel" class="w-full h-full object-cover">
+                                <span class="absolute top-2 right-2 bg-gbGreen text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Verified</span>
+                            </div>
+                            <div class="p-4">
+                                <div class="text-[10px] text-gbBlue font-extrabold uppercase tracking-wide">Shangrila Resort</div>
+                                <h4 class="font-bold text-sm text-gray-900 mt-0.5">Executive Lake View Suite</h4>
+                                <div class="flex items-center text-xs text-gray-500 mt-2">
+                                    <i class="fa-solid fa-location-dot text-gbOrange mr-1.5"></i>
+                                    <span>Lower Kachura Lake, Skardu</span>
+                                </div>
+                                <div class="mt-3 flex items-baseline justify-between">
+                                    <span class="text-xs text-gray-500">Starts from</span>
+                                    <span class="text-base font-extrabold text-gbGreen">PKR 18,500 <span class="text-[10px] text-gray-500 font-normal">/ night</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 pt-0 grid grid-cols-2 gap-2 mt-2">
+                            <button onclick="showDetails('Shangrila Resort - Executive Lake View Suite')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-bold py-2 rounded-lg transition text-center">Details</button>
+                            <button onclick="bookNow('Shangrila Resort - Executive Lake View Suite')" class="bg-gbGreen hover:bg-gbGreenDark text-white text-xs font-bold py-2 rounded-lg shadow transition text-center">Book</button>
+                        </div>
+                    </div>
+
+                    <!-- Provider Card 2 -->
+                    <div class="mobile-snap-card min-w-[85%] sm:min-w-[65%] md:min-w-0 bg-gray-50 rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="relative h-40 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=500&q=80" alt="Hunza Serena Hotel" class="w-full h-full object-cover">
+                                <span class="absolute top-2 right-2 bg-gbGreen text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Verified</span>
+                            </div>
+                            <div class="p-4">
+                                <div class="text-[10px] text-gbBlue font-extrabold uppercase tracking-wide">Hunza Serena Inn</div>
+                                <h4 class="font-bold text-sm text-gray-900 mt-0.5">Heritage Royal Room</h4>
+                                <div class="flex items-center text-xs text-gray-500 mt-2">
+                                    <i class="fa-solid fa-location-dot text-gbOrange mr-1.5"></i>
+                                    <span>Karimabad, Hunza Valley</span>
+                                </div>
+                                <div class="mt-3 flex items-baseline justify-between">
+                                    <span class="text-xs text-gray-500">Starts from</span>
+                                    <span class="text-base font-extrabold text-gbGreen">PKR 22,000 <span class="text-[10px] text-gray-500 font-normal">/ night</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 pt-0 grid grid-cols-2 gap-2 mt-2">
+                            <button onclick="showDetails('Hunza Serena Inn - Heritage Royal Room')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-bold py-2 rounded-lg transition text-center">Details</button>
+                            <button onclick="bookNow('Hunza Serena Inn - Heritage Royal Room')" class="bg-gbGreen hover:bg-gbGreenDark text-white text-xs font-bold py-2 rounded-lg shadow transition text-center">Book</button>
+                        </div>
+                    </div>
+
+                    <!-- Provider Card 3 -->
+                    <div class="mobile-snap-card min-w-[85%] sm:min-w-[65%] md:min-w-0 bg-gray-50 rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="relative h-40 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=500&q=80" alt="Gilgit Continental" class="w-full h-full object-cover">
+                                <span class="absolute top-2 right-2 bg-gbGreen text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Verified</span>
+                            </div>
+                            <div class="p-4">
+                                <div class="text-[10px] text-gbBlue font-extrabold uppercase tracking-wide">Gilgit Gateway Hotel</div>
+                                <h4 class="font-bold text-sm text-gray-900 mt-0.5">Deluxe Family Room</h4>
+                                <div class="flex items-center text-xs text-gray-500 mt-2">
+                                    <i class="fa-solid fa-location-dot text-gbOrange mr-1.5"></i>
+                                    <span>Jubilee Chowk, Gilgit</span>
+                                </div>
+                                <div class="mt-3 flex items-baseline justify-between">
+                                    <span class="text-xs text-gray-500">Starts from</span>
+                                    <span class="text-base font-extrabold text-gbGreen">PKR 12,000 <span class="text-[10px] text-gray-500 font-normal">/ night</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 pt-0 grid grid-cols-2 gap-2 mt-2">
+                            <button onclick="showDetails('Gilgit Gateway Hotel - Deluxe Family Room')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-bold py-2 rounded-lg transition text-center">Details</button>
+                            <button onclick="bookNow('Gilgit Gateway Hotel - Deluxe Family Room')" class="bg-gbGreen hover:bg-gbGreenDark text-white text-xs font-bold py-2 rounded-lg shadow transition text-center">Book</button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- CATEGORY 2: TRANSPORT & TRAVEL -->
+            <section id="transport" class="bg-white rounded-2xl p-4 sm:p-6 border border-gray-200 shadow-sm">
+                <div class="flex items-center justify-between pb-4 border-b mb-6">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-lg bg-green-100 text-gbGreen flex items-center justify-center">
+                            <i class="fa-solid fa-bus"></i>
+                        </div>
+                        <div>
+                            <!-- Category title 10px on mobile/tablet -->
+                            <h3 class="text-[10px] sm:text-xl font-bold text-gray-900 leading-tight">Transport & Vehicle Providers</h3>
+                            <p class="text-[9px] sm:text-xs text-gray-500 hidden sm:block">4x4 Jeeps, Hiace Vans & Luxury Cars for Mountain Expeditions</p>
+                        </div>
+                    </div>
+                    <!-- View All button replacement -->
+                    <button onclick="showToast('Loading all Transport Providers')" class="text-[10px] sm:text-xs font-bold text-gbBlue hover:text-gbBlueDark border border-gbBlue/30 hover:border-gbBlue bg-blue-50 px-3 py-1.5 rounded-lg transition flex items-center space-x-1">
+                        <span>View All</span>
+                        <i class="fa-solid fa-chevron-right text-[8px]"></i>
+                    </button>
+                </div>
+
+                <!-- Provider Cards Layout: Swipe on Mobile/Tablet, 3 Grid on Desktop -->
+                <div class="flex md:grid md:grid-cols-3 gap-4 overflow-x-auto mobile-snap-scroll md:overflow-visible pb-3 md:pb-0">
+                    
+                    <!-- Provider Card 1 -->
+                    <div class="mobile-snap-card min-w-[85%] sm:min-w-[65%] md:min-w-0 bg-gray-50 rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="relative h-40 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=500&q=80" alt="Karakoram Jeep Services" class="w-full h-full object-cover">
+                                <span class="absolute top-2 right-2 bg-gbGreen text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Verified</span>
+                            </div>
+                            <div class="p-4">
+                                <div class="text-[10px] text-gbBlue font-extrabold uppercase tracking-wide">Karakoram Travels</div>
+                                <h4 class="font-bold text-sm text-gray-900 mt-0.5">Prado TZ 4x4 Off-Road Jeep</h4>
+                                <div class="flex items-center text-xs text-gray-500 mt-2">
+                                    <i class="fa-solid fa-location-dot text-gbOrange mr-1.5"></i>
+                                    <span>Skardu to Deosai Plains</span>
+                                </div>
+                                <div class="mt-3 flex items-baseline justify-between">
+                                    <span class="text-xs text-gray-500">Day Rate</span>
+                                    <span class="text-base font-extrabold text-gbGreen">PKR 15,000 <span class="text-[10px] text-gray-500 font-normal">/ day</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 pt-0 grid grid-cols-2 gap-2 mt-2">
+                            <button onclick="showDetails('Karakoram Travels - Prado TZ 4x4')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-bold py-2 rounded-lg transition text-center">Details</button>
+                            <button onclick="bookNow('Karakoram Travels - Prado TZ 4x4')" class="bg-gbGreen hover:bg-gbGreenDark text-white text-xs font-bold py-2 rounded-lg shadow transition text-center">Book</button>
+                        </div>
+                    </div>
+
+                    <!-- Provider Card 2 -->
+                    <div class="mobile-snap-card min-w-[85%] sm:min-w-[65%] md:min-w-0 bg-gray-50 rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="relative h-40 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1570125909222-49930c6d7220?auto=format&fit=crop&w=500&q=80" alt="Hunza Express Van" class="w-full h-full object-cover">
+                                <span class="absolute top-2 right-2 bg-gbGreen text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Verified</span>
+                            </div>
+                            <div class="p-4">
+                                <div class="text-[10px] text-gbBlue font-extrabold uppercase tracking-wide">Hunza Express Logistics</div>
+                                <h4 class="font-bold text-sm text-gray-900 mt-0.5">Toyota Grand Cabin (13 Seater)</h4>
+                                <div class="flex items-center text-xs text-gray-500 mt-2">
+                                    <i class="fa-solid fa-location-dot text-gbOrange mr-1.5"></i>
+                                    <span>Gilgit to Hunza / Khunjerab</span>
+                                </div>
+                                <div class="mt-3 flex items-baseline justify-between">
+                                    <span class="text-xs text-gray-500">Day Rate</span>
+                                    <span class="text-base font-extrabold text-gbGreen">PKR 18,000 <span class="text-[10px] text-gray-500 font-normal">/ day</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 pt-0 grid grid-cols-2 gap-2 mt-2">
+                            <button onclick="showDetails('Hunza Express Logistics - Grand Cabin')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-bold py-2 rounded-lg transition text-center">Details</button>
+                            <button onclick="bookNow('Hunza Express Logistics - Grand Cabin')" class="bg-gbGreen hover:bg-gbGreenDark text-white text-xs font-bold py-2 rounded-lg shadow transition text-center">Book</button>
+                        </div>
+                    </div>
+
+                    <!-- Provider Card 3 -->
+                    <div class="mobile-snap-card min-w-[85%] sm:min-w-[65%] md:min-w-0 bg-gray-50 rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="relative h-40 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=500&q=80" alt="Gilgit Rent A Car" class="w-full h-full object-cover">
+                                <span class="absolute top-2 right-2 bg-gbGreen text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Verified</span>
+                            </div>
+                            <div class="p-4">
+                                <div class="text-[10px] text-gbBlue font-extrabold uppercase tracking-wide">Baltistan Cabs</div>
+                                <h4 class="font-bold text-sm text-gray-900 mt-0.5">Corolla GLi with Driver</h4>
+                                <div class="flex items-center text-xs text-gray-500 mt-2">
+                                    <i class="fa-solid fa-location-dot text-gbOrange mr-1.5"></i>
+                                    <span>Airport Pick & Drop, Gilgit</span>
+                                </div>
+                                <div class="mt-3 flex items-baseline justify-between">
+                                    <span class="text-xs text-gray-500">Fixed Trip</span>
+                                    <span class="text-base font-extrabold text-gbGreen">PKR 6,500 <span class="text-[10px] text-gray-500 font-normal">/ trip</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 pt-0 grid grid-cols-2 gap-2 mt-2">
+                            <button onclick="showDetails('Baltistan Cabs - Corolla GLi')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-bold py-2 rounded-lg transition text-center">Details</button>
+                            <button onclick="bookNow('Baltistan Cabs - Corolla GLi')" class="bg-gbGreen hover:bg-gbGreenDark text-white text-xs font-bold py-2 rounded-lg shadow transition text-center">Book</button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- CATEGORY 3: HOME SERVICES -->
+            <section id="home-services" class="bg-white rounded-2xl p-4 sm:p-6 border border-gray-200 shadow-sm">
+                <div class="flex items-center justify-between pb-4 border-b mb-6">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 text-gbBlue flex items-center justify-center">
+                            <i class="fa-solid fa-wrench"></i>
+                        </div>
+                        <div>
+                            <!-- Category title 10px on mobile/tablet -->
+                            <h3 class="text-[10px] sm:text-xl font-bold text-gray-900 leading-tight">Verified Home Services</h3>
+                            <p class="text-[9px] sm:text-xs text-gray-500 hidden sm:block">Electricians, Plumbers, Solar Engineers & Technicians</p>
+                        </div>
+                    </div>
+                    <!-- View All button replacement -->
+                    <button onclick="showToast('Loading all Home Service Specialists')" class="text-[10px] sm:text-xs font-bold text-gbBlue hover:text-gbBlueDark border border-gbBlue/30 hover:border-gbBlue bg-blue-50 px-3 py-1.5 rounded-lg transition flex items-center space-x-1">
+                        <span>View All</span>
+                        <i class="fa-solid fa-chevron-right text-[8px]"></i>
+                    </button>
+                </div>
+
+                <!-- Provider Cards Layout: Swipe on Mobile/Tablet, 3 Grid on Desktop -->
+                <div class="flex md:grid md:grid-cols-3 gap-4 overflow-x-auto mobile-snap-scroll md:overflow-visible pb-3 md:pb-0">
+                    
+                    <!-- Provider Card 1 -->
+                    <div class="mobile-snap-card min-w-[85%] sm:min-w-[65%] md:min-w-0 bg-gray-50 rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="relative h-40 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=500&q=80" alt="Electrician Service" class="w-full h-full object-cover">
+                                <span class="absolute top-2 right-2 bg-gbGreen text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Verified</span>
+                            </div>
+                            <div class="p-4">
+                                <div class="text-[10px] text-gbBlue font-extrabold uppercase tracking-wide">Gilgit Smart Care</div>
+                                <h4 class="font-bold text-sm text-gray-900 mt-0.5">Solar & Electrical Installation</h4>
+                                <div class="flex items-center text-xs text-gray-500 mt-2">
+                                    <i class="fa-solid fa-location-dot text-gbOrange mr-1.5"></i>
+                                    <span>Naya Bazaar & Surrounding, Gilgit</span>
+                                </div>
+                                <div class="mt-3 flex items-baseline justify-between">
+                                    <span class="text-xs text-gray-500">Visit Fee</span>
+                                    <span class="text-base font-extrabold text-gbGreen">PKR 1,500 <span class="text-[10px] text-gray-500 font-normal">/ visit</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 pt-0 grid grid-cols-2 gap-2 mt-2">
+                            <button onclick="showDetails('Gilgit Smart Care - Solar & Electrical')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-bold py-2 rounded-lg transition text-center">Details</button>
+                            <button onclick="bookNow('Gilgit Smart Care - Solar & Electrical')" class="bg-gbGreen hover:bg-gbGreenDark text-white text-xs font-bold py-2 rounded-lg shadow transition text-center">Book</button>
+                        </div>
+                    </div>
+
+                    <!-- Provider Card 2 -->
+                    <div class="mobile-snap-card min-w-[85%] sm:min-w-[65%] md:min-w-0 bg-gray-50 rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="relative h-40 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&w=500&q=80" alt="Plumbing Specialist" class="w-full h-full object-cover">
+                                <span class="absolute top-2 right-2 bg-gbGreen text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Verified</span>
+                            </div>
+                            <div class="p-4">
+                                <div class="text-[10px] text-gbBlue font-extrabold uppercase tracking-wide">Baltistan Plumbing Experts</div>
+                                <h4 class="font-bold text-sm text-gray-900 mt-0.5">Emergency Pipe Repair & Geyser</h4>
+                                <div class="flex items-center text-xs text-gray-500 mt-2">
+                                    <i class="fa-solid fa-location-dot text-gbOrange mr-1.5"></i>
+                                    <span>Hussainabad, Skardu</span>
+                                </div>
+                                <div class="mt-3 flex items-baseline justify-between">
+                                    <span class="text-xs text-gray-500">Visit Fee</span>
+                                    <span class="text-base font-extrabold text-gbGreen">PKR 1,200 <span class="text-[10px] text-gray-500 font-normal">/ visit</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 pt-0 grid grid-cols-2 gap-2 mt-2">
+                            <button onclick="showDetails('Baltistan Plumbing Experts')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-bold py-2 rounded-lg transition text-center">Details</button>
+                            <button onclick="bookNow('Baltistan Plumbing Experts')" class="bg-gbGreen hover:bg-gbGreenDark text-white text-xs font-bold py-2 rounded-lg shadow transition text-center">Book</button>
+                        </div>
+                    </div>
+
+                    <!-- Provider Card 3 -->
+                    <div class="mobile-snap-card min-w-[85%] sm:min-w-[65%] md:min-w-0 bg-gray-50 rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="relative h-40 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=500&q=80" alt="Carpentry Services" class="w-full h-full object-cover">
+                                <span class="absolute top-2 right-2 bg-gbGreen text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Verified</span>
+                            </div>
+                            <div class="p-4">
+                                <div class="text-[10px] text-gbBlue font-extrabold uppercase tracking-wide">Hunza Wood Crafters</div>
+                                <h4 class="font-bold text-sm text-gray-900 mt-0.5">Custom Woodworking & Doors</h4>
+                                <div class="flex items-center text-xs text-gray-500 mt-2">
+                                    <i class="fa-solid fa-location-dot text-gbOrange mr-1.5"></i>
+                                    <span>Aliabad, Hunza</span>
+                                </div>
+                                <div class="mt-3 flex items-baseline justify-between">
+                                    <span class="text-xs text-gray-500">Starting at</span>
+                                    <span class="text-base font-extrabold text-gbGreen">PKR 2,500 <span class="text-[10px] text-gray-500 font-normal">/ job</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 pt-0 grid grid-cols-2 gap-2 mt-2">
+                            <button onclick="showDetails('Hunza Wood Crafters')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-bold py-2 rounded-lg transition text-center">Details</button>
+                            <button onclick="bookNow('Hunza Wood Crafters')" class="bg-gbGreen hover:bg-gbGreenDark text-white text-xs font-bold py-2 rounded-lg shadow transition text-center">Book</button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+        <!-- ABOUT & PRIVACY SECTION -->
+        <section id="about" class="bg-white border-t border-b border-gray-200 py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <span class="text-xs font-bold text-gbBlue uppercase tracking-wider">About GBbooking.com</span>
+                        <h2 class="text-2xl font-extrabold text-gray-900 mt-1">Empowering Local Services & Tourism in Gilgit-Baltistan</h2>
+                        <p class="text-xs sm:text-sm text-gray-600 mt-3 leading-relaxed">
+                            GBbooking.com is Gilgit-Baltistan's premier localized digital booking platform. Designed specifically for the northern areas of Pakistan, we bridge the gap between mountain travelers, local hotel owners, transport providers, and skilled home technicians.
+                        </p>
+                        <div class="mt-4 flex flex-wrap gap-4 text-xs font-medium text-gray-700">
+                            <div class="flex items-center space-x-1.5"><i class="fa-solid fa-circle-check text-gbGreen"></i><span>100% Verified Local Providers</span></div>
+                            <div class="flex items-center space-x-1.5"><i class="fa-solid fa-circle-check text-gbGreen"></i><span>Direct Booking Rates</span></div>
+                            <div class="flex items-center space-x-1.5"><i class="fa-solid fa-circle-check text-gbGreen"></i><span>24/7 Regional Support</span></div>
+                        </div>
+                    </div>
+                    <div id="privacy" class="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                        <h3 class="text-lg font-bold text-gbBlue flex items-center space-x-2">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>Privacy & Consumer Safety</span>
+                        </h3>
+                        <p class="text-xs text-gray-600 mt-2 leading-relaxed">
+                            We prioritize customer data protection and reliable payments. Every service listing goes through mandatory identity verification to ensure maximum safety for tourists and local residents across Gilgit, Skardu, Hunza, and Diamer.
+                        </p>
+                        <a href="privacy.html" class="inline-block mt-4 text-xs font-bold text-gbBlue hover:underline">Read Privacy Policy Details &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SHARED MASTER MOBILE/TABLET BOTTOM NAVIGATION -->
+<div data-shared-component="mobile-bottom-nav"></div>
+
+    <!-- SHARED MASTER FOOTER -->
+<div data-shared-component="footer"></div>
+
+    <script>
+        // 2. Hero carousel: readable timing, accessible controls, and pause behavior
+        let currentSlide = 0;
+        const heroTrack = document.getElementById('heroTrack');
+        const slides = heroTrack ? Array.from(heroTrack.children) : [];
+        const totalSlides = slides.length;
+        const dots = document.querySelectorAll('.dot');
+        const heroContainer = heroTrack?.parentElement;
+        let slideInterval = null;
+        const carouselDelay = 5000;
+
+        function updateSlider() {
+            if (!heroTrack || !totalSlides) return;
+            currentSlide = (currentSlide + totalSlides) % totalSlides;
+            heroTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+            dots.forEach((dot, idx) => {
+                const active = idx === currentSlide;
+                dot.classList.toggle('bg-white', active);
+                dot.classList.toggle('w-4', active);
+                dot.classList.toggle('bg-white/50', !active);
+                dot.setAttribute('aria-current', active ? 'true' : 'false');
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlider();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlider();
+        }
+
+        function setSlide(index) {
+            if (!Number.isInteger(index) || index < 0 || index >= totalSlides) return;
+            currentSlide = index;
+            updateSlider();
+            resetTimer();
+        }
+
+        function stopTimer() {
+            if (slideInterval) clearInterval(slideInterval);
+            slideInterval = null;
+        }
+
+        function startTimer() {
+            stopTimer();
+            if (totalSlides > 1 && !document.hidden) {
+                slideInterval = setInterval(nextSlide, carouselDelay);
+            }
+        }
+
+        function resetTimer() {
+            startTimer();
+        }
+
+        heroContainer?.addEventListener('mouseenter', stopTimer);
+        heroContainer?.addEventListener('mouseleave', startTimer);
+        heroContainer?.addEventListener('focusin', stopTimer);
+        heroContainer?.addEventListener('focusout', (event) => {
+            if (!heroContainer.contains(event.relatedTarget)) startTimer();
+        });
+        document.addEventListener('visibilitychange', () => {
+            document.hidden ? stopTimer() : startTimer();
+        });
+
+        window.addEventListener('load', () => {
+            updateSlider();
+            startTimer();
+        });
+
+        // 3. Search demo: filter the existing sample cards without changing their design
+        function triggerSearch() {
+            const service = (document.getElementById('serviceInput')?.value || '').trim().toLowerCase();
+            const area = (document.getElementById('areaSelect')?.value || '').trim().toLowerCase();
+            const cards = Array.from(document.querySelectorAll('#hotels .mobile-snap-card, #transport .mobile-snap-card, #home-services .mobile-snap-card'));
+            let matches = 0;
+
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                const serviceMatch = !service || service.split(/\s+/).every(term => text.includes(term));
+                const areaMatch = !area || text.includes(area);
+                const visible = serviceMatch && areaMatch;
+                card.classList.toggle('hidden', !visible);
+                if (visible) matches++;
+            });
+
+            ['hotels', 'transport', 'home-services'].forEach(id => {
+                const section = document.getElementById(id);
+                if (!section) return;
+                const visibleCards = section.querySelectorAll('.mobile-snap-card:not(.hidden)').length;
+                section.classList.toggle('hidden', visibleCards === 0);
+            });
+
+            showToast(matches
+                ? `Showing ${matches} matching service ${matches === 1 ? 'listing' : 'listings'}.`
+                : 'No matching sample listings. Try another service or area.');
+        }
+
+        function showDetails(serviceTitle) {
+            showToast(`Details for ${serviceTitle} will be available when provider pages are connected.`);
+        }
+
+        function bookNow(serviceTitle) {
+            showToast(`Booking for ${serviceTitle} is not live in this frontend demo yet.`);
+        }
+
+        // Safe toast rendering: user-entered text is never interpreted as HTML
+        let toastTimeout;
+        let toastFadeTimeout;
+        function showToast(text) {
+            const existingToast = document.getElementById('gbToast');
+            if (existingToast) existingToast.remove();
+            clearTimeout(toastTimeout);
+            clearTimeout(toastFadeTimeout);
+
+            const toast = document.createElement('div');
+            toast.id = 'gbToast';
+            toast.setAttribute('role', 'status');
+            toast.setAttribute('aria-live', 'polite');
+            toast.className = 'fixed bottom-20 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xl z-50 flex items-center space-x-2 transition-all duration-300';
+
+            const icon = document.createElement('i');
+            icon.className = 'fa-solid fa-circle-info text-gbGreen';
+            icon.setAttribute('aria-hidden', 'true');
+            const message = document.createElement('span');
+            message.textContent = text;
+            toast.append(icon, message);
+            document.body.appendChild(toast);
+
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('opacity-0');
+                toastFadeTimeout = setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+    </script>
+<script src="/assets/js/layout.js?v=20261101"></script>
+</body>
+</html>

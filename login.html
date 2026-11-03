@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0056b3">
+<title>Login or Sign Up | GBbooking.com</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{colors:{gbBlue:'#0056b3',gbBlueDark:'#004085',gbGreen:'#28a745',gbOrange:'#f97316'}}}}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/shared-layout.css?v=20261101-auth">
+<style>
+body{font-family:Inter,sans-serif}.auth-bg{background:radial-gradient(circle at 15% 10%,#e8f2ff 0,transparent 38%),radial-gradient(circle at 90% 90%,#eaf8ef 0,transparent 35%),#f8fafc}
+.auth-input{width:100%;border:1px solid #d1d5db;border-radius:12px;padding:10px 12px;font-size:14px;outline:none;background:#fff;transition:border-color .2s,box-shadow .2s}
+.auth-input:focus{border-color:#0056b3;box-shadow:0 0 0 3px rgb(0 86 179 / .12)}
+.role-card{border:1px solid #e5e7eb;border-radius:14px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;background:white;transition:.2s}
+.role-card:has(input:checked){border-color:#0056b3;background:#eff6ff;box-shadow:0 0 0 1px #0056b3}
+.role-card input{accent-color:#0056b3}
+</style>
+</head>
+<body class="auth-bg min-h-screen text-gray-800">
+<div data-shared-component="header"></div>
+<main class="max-w-md mx-auto px-4 py-5 sm:py-8">
+<section class="w-full">
+<div class="bg-white rounded-2xl border border-gray-200 shadow-lg shadow-gray-200/50 p-4 sm:p-6">
+<div class="text-center mb-4">
+<a href="index.html" class="inline-flex justify-center"><img src="/assets/brand/Logo.png" alt="GBbooking.com" class="h-11 sm:h-12 w-auto max-w-[190px] object-contain"></a>
+<h2 id="formTitle" class="mt-2 text-xl font-extrabold text-gray-900">Welcome back</h2>
+</div>
+<div class="grid grid-cols-2 rounded-xl bg-gray-100 p-1 mb-4" role="tablist" aria-label="Account action">
+<button id="loginTab" type="button" class="rounded-lg bg-white py-2.5 text-sm font-bold text-gbBlue shadow-sm" aria-selected="true">Log In</button>
+<button id="signupTab" type="button" class="rounded-lg py-2.5 text-sm font-semibold text-gray-500" aria-selected="false">Sign Up</button>
+</div>
+<form id="authForm" class="space-y-3">
+<div id="roleField">
+<label class="block text-xs font-bold uppercase tracking-wide text-gray-600 mb-2">Continue as</label>
+<div class="grid grid-cols-2 gap-3">
+<label class="role-card"><input type="radio" name="role" value="customer" checked><span><span class="block text-sm font-bold text-gray-800">Customer</span></span></label>
+<label class="role-card"><input type="radio" name="role" value="provider"><span><span class="block text-sm font-bold text-gray-800">Provider</span></span></label>
+</div>
+</div>
+<div id="nameField" class="hidden">
+<label for="fullName" class="block text-xs font-bold text-gray-600 mb-1.5">Full name</label>
+<input id="fullName" name="name" autocomplete="name" class="auth-input" placeholder="Enter your full name">
+</div>
+<div>
+<label for="email" class="block text-xs font-bold text-gray-600 mb-1.5">Email address</label>
+<input id="email" name="email" type="email" autocomplete="email" required class="auth-input" placeholder="you@example.com">
+</div>
+<div>
+<div class="flex items-center justify-between mb-1.5"><label for="password" class="block text-xs font-bold text-gray-600">Password</label><a id="forgotLink" href="#" class="text-xs font-semibold text-gbBlue hover:underline">Forgot password?</a></div>
+<div class="relative"><input id="password" name="password" type="password" autocomplete="current-password" required minlength="6" class="auth-input pr-12" placeholder="Enter your password"><button id="togglePassword" type="button" class="absolute inset-y-0 right-0 px-4 text-gray-500 hover:text-gbBlue" aria-label="Show password"><i class="fa-regular fa-eye"></i></button></div>
+</div>
+<div id="confirmField" class="hidden">
+<label for="confirmPassword" class="block text-xs font-bold text-gray-600 mb-1.5">Confirm password</label>
+<div class="relative"><input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" class="auth-input pr-12" placeholder="Re-enter your password"><button id="toggleConfirm" type="button" class="absolute inset-y-0 right-0 px-4 text-gray-500 hover:text-gbBlue" aria-label="Show confirm password"><i class="fa-regular fa-eye"></i></button></div>
+</div>
+<label id="termsField" class="hidden items-start gap-2 text-xs text-gray-500"><input id="terms" type="checkbox" class="mt-0.5 accent-blue-700"><span>I agree to the <a href="privacy.html" class="text-gbBlue font-semibold hover:underline">Privacy Policy</a> and the platform terms.</span></label>
+<button id="submitButton" type="submit" class="w-full rounded-xl bg-gbBlue hover:bg-gbBlueDark text-white py-2.5 font-bold text-sm shadow-md transition active:scale-[.99]"><span id="submitLabel">Log In</span><i class="fa-solid fa-arrow-right ml-2 text-xs"></i></button>
+</form>
+<div class="flex items-center gap-3 my-4"><div class="h-px flex-1 bg-gray-200"></div><span class="text-xs text-gray-400">or continue with</span><div class="h-px flex-1 bg-gray-200"></div></div>
+<button id="googleButton" type="button" class="w-full flex items-center justify-center gap-3 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 py-2.5 text-sm font-semibold text-gray-700 transition"><svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5"><path fill="#4285F4" d="M21.6 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.38a4.6 4.6 0 0 1-2 3.02v2.52h3.24c1.9-1.75 2.98-4.33 2.98-7.37Z"/><path fill="#34A853" d="M12 22c2.7 0 4.96-.9 6.62-2.4l-3.24-2.52c-.9.6-2.05.96-3.38.96-2.6 0-4.8-1.76-5.58-4.12H3.08v2.6A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.42 13.92A6 6 0 0 1 6.1 12c0-.67.12-1.32.32-1.92v-2.6H3.08A10 10 0 0 0 2 12c0 1.62.39 3.15 1.08 4.52l3.34-2.6Z"/><path fill="#EA4335" d="M12 5.96c1.47 0 2.79.5 3.82 1.5l2.86-2.86C16.95 2.98 14.7 2 12 2a10 10 0 0 0-8.92 5.48l3.34 2.6C7.2 7.72 9.4 5.96 12 5.96Z"/></svg><span>Continue with Google</span></button>
+<p id="notice" class="hidden mt-4 rounded-xl bg-blue-50 border border-blue-100 px-3 py-2.5 text-xs text-blue-800" role="status"></p>
+
+</div>
+</section>
+</main>
+<div data-shared-component="mobile-bottom-nav"></div>
+<div data-shared-component="footer"></div>
+<script src="/assets/js/layout.js?v=20261101"></script>
+<script>
+const loginTab=document.getElementById('loginTab'),signupTab=document.getElementById('signupTab'),roleField=document.getElementById('roleField'),nameField=document.getElementById('nameField'),confirmField=document.getElementById('confirmField'),termsField=document.getElementById('termsField'),forgotLink=document.getElementById('forgotLink'),formTitle=document.getElementById('formTitle'),submitLabel=document.getElementById('submitLabel'),password=document.getElementById('password'),confirmPassword=document.getElementById('confirmPassword'),notice=document.getElementById('notice');
+let mode='login';
+function setMode(next){mode=next;const signup=mode==='signup';loginTab.className=signup?'rounded-lg py-2.5 text-sm font-semibold text-gray-500':'rounded-lg bg-white py-2.5 text-sm font-bold text-gbBlue shadow-sm';signupTab.className=signup?'rounded-lg bg-white py-2.5 text-sm font-bold text-gbBlue shadow-sm':'rounded-lg py-2.5 text-sm font-semibold text-gray-500';loginTab.setAttribute('aria-selected',String(!signup));signupTab.setAttribute('aria-selected',String(signup));roleField.classList.remove('hidden');nameField.classList.toggle('hidden',!signup);confirmField.classList.toggle('hidden',!signup);termsField.classList.toggle('hidden',!signup);termsField.classList.toggle('flex',signup);document.getElementById('fullName').required=signup;confirmPassword.required=signup;document.getElementById('terms').required=signup;password.autocomplete=signup?'new-password':'current-password';forgotLink.classList.toggle('hidden',signup);formTitle.textContent=signup?'Create your account':'Welcome back';submitLabel.textContent=signup?'Create Account':'Log In';notice.classList.add('hidden');}
+loginTab.addEventListener('click',()=>setMode('login'));signupTab.addEventListener('click',()=>setMode('signup'));
+function toggleVisibility(input,button){const show=input.type==='password';input.type=show?'text':'password';button.innerHTML='<i class="fa-regular '+(show?'fa-eye-slash':'fa-eye')+'"></i>';button.setAttribute('aria-label',show?'Hide password':'Show password');}
+document.getElementById('togglePassword').addEventListener('click',()=>toggleVisibility(password,document.getElementById('togglePassword')));
+document.getElementById('toggleConfirm').addEventListener('click',()=>toggleVisibility(confirmPassword,document.getElementById('toggleConfirm')));
+document.getElementById('authForm').addEventListener('submit',e=>{e.preventDefault();if(mode==='signup'&&password.value!==confirmPassword.value){notice.textContent='Your passwords do not match.';notice.classList.remove('hidden');return;}const email=document.getElementById('email').value.trim();const name=mode==='signup'?document.getElementById('fullName').value.trim():(email.split('@')[0]||'Customer');localStorage.setItem('gbbooking_demo_name',name||'Customer');const selectedRole=document.querySelector('input[name=role]:checked')?.value||'customer';localStorage.setItem('gbbooking_demo_role',selectedRole);window.location.href=selectedRole==='provider'?'provider-dashboard.html':'dashboard.html';});
+document.getElementById('googleButton').addEventListener('click',()=>{const selectedRole=document.querySelector('input[name=role]:checked')?.value||'customer';localStorage.setItem('gbbooking_demo_name',selectedRole==='provider'?'Provider':'Customer');localStorage.setItem('gbbooking_demo_role',selectedRole);window.location.href=selectedRole==='provider'?'provider-dashboard.html':'dashboard.html';});
+forgotLink.addEventListener('click',e=>{e.preventDefault();notice.textContent='Password reset will be available after Supabase authentication is connected.';notice.classList.remove('hidden');});
+</script>
+</body>
+</html>

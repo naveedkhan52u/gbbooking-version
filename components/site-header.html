@@ -1,0 +1,112 @@
+<!-- DESKTOP & MOBILE HEADER (WHITE BACKGROUND, BLACK TEXT) -->
+    <header class="gb-master-header bg-white border-b border-gray-200 text-gray-900 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 md:h-20">
+                
+                <!-- Mobile Gutenberg / Hamburger Icon before Logo -->
+                <div class="flex items-center space-x-3">
+                    <button id="mobileMenuBtn" class="lg:hidden text-gray-800 p-2 focus:outline-none hover:bg-gray-100 rounded-lg transition" aria-label="Open Gutenberg Menu">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+
+                    <!-- Logo -->
+                    <a href="index.html" class="flex items-center bg-white py-1.5 rounded-lg" aria-label="GBbooking.com Home">
+                        <img src="/assets/brand/Logo.png" alt="GBbooking.com" class="h-10 sm:h-12 w-auto max-w-[180px] object-contain" fetchpriority="high">
+                    </a>
+                </div>
+
+                <!-- Navigation Links & Mobile Account Icon -->
+                <div class="flex items-center space-x-2">
+                    <!-- Desktop Navigation Links -->
+                    <nav class="hidden lg:flex items-center space-x-1 lg:space-x-3">
+                        <a href="index.html" class="px-3 py-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-100 flex items-center space-x-1.5 transition">
+                            <i class="fa-solid fa-house text-gbOrange"></i>
+                            <span>Home</span>
+                        </a>
+                        <a href="services.html" class="px-3 py-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-100 flex items-center space-x-1.5 transition">
+                            <i class="fa-solid fa-concierge-bell text-gbGreen"></i>
+                            <span>Services</span>
+                        </a>
+                        <a href="about.html" class="px-3 py-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-100 flex items-center space-x-1.5 transition">
+                            <i class="fa-solid fa-circle-info text-sky-600"></i>
+                            <span>About Us</span>
+                        </a>
+                        <a href="privacy.html" class="px-3 py-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-100 flex items-center space-x-1.5 transition">
+                            <i class="fa-solid fa-shield-halved text-amber-500"></i>
+                            <span>Privacy Policy</span>
+                        </a>
+                        <a href="support.html" class="px-3 py-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-100 flex items-center space-x-1.5 transition">
+                            <i class="fa-solid fa-headset text-emerald-600"></i>
+                            <span>Customer Support</span>
+                        </a>
+                        <a href="contact.html" class="px-3 py-2 rounded-lg text-sm font-semibold text-gray-800 hover:bg-gray-100 flex items-center space-x-1.5 transition">
+                            <i class="fa-solid fa-envelope text-emerald-600"></i>
+                            <span>Contact</span>
+                        </a>
+                        <a href="login.html" class="ml-2 bg-gbBlue hover:bg-gbBlueDark text-white px-4 py-2 rounded-lg text-sm font-bold shadow flex items-center space-x-2 transition transform active:scale-95">
+                            <i class="fa-solid fa-user-circle text-white"></i>
+                            <span>Account</span>
+                        </a>
+                    </nav>
+
+                    <!-- Mobile/Tablet Account Button (Visible in top right, icon only) -->
+                    <a href="login.html" class="lg:hidden bg-gbBlue hover:bg-gbBlueDark text-white w-9 h-9 rounded-full shadow flex items-center justify-center transition active:scale-95" aria-label="Account">
+                        <i class="fa-solid fa-user text-white text-sm"></i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE GUTENBERG DRAWER MENU -->
+    <div id="mobileDrawer" class="fixed inset-0 bg-black/50 z-50 hidden lg:hidden flex justify-start">
+        <div class="bg-white w-4/5 max-w-xs h-full p-6 shadow-2xl flex flex-col justify-between overflow-y-auto">
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b">
+                    <a href="index.html" class="inline-flex items-center" aria-label="GBbooking.com Home"><img src="/assets/brand/Logo.png" alt="GBbooking.com" class="h-9 w-auto max-w-[160px] object-contain"></a>
+                    <button id="closeDrawerBtn" class="text-gray-500 hover:text-gray-800 p-1">
+                        <i class="fa-solid fa-xmark text-2xl"></i>
+                    </button>
+                </div>
+
+                <div class="mt-6 space-y-2">
+                    <a href="index.html#home" class="drawer-link flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-gbBlue font-medium">
+                        <i class="fa-solid fa-house w-6 text-gbBlue"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="services.html" class="drawer-link flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-gbBlue font-medium">
+                        <i class="fa-solid fa-concierge-bell w-6 text-gbGreen"></i>
+                        <span>Services</span>
+                    </a>
+                    <a href="index.html#categories" class="drawer-link flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-gbBlue font-medium">
+                        <i class="fa-solid fa-layer-group w-6 text-gbOrange"></i>
+                        <span>All Categories</span>
+                    </a>
+                    <a href="about.html" class="drawer-link flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-gbBlue font-medium">
+                        <i class="fa-solid fa-circle-info w-6 text-sky-500"></i>
+                        <span>About Us</span>
+                    </a>
+                    <a href="privacy.html" class="drawer-link flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-gbBlue font-medium">
+                        <i class="fa-solid fa-shield-halved w-6 text-emerald-600"></i>
+                        <span>Privacy Policy</span>
+                    </a>
+                    <a href="support.html" class="drawer-link flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-gbBlue font-medium">
+                        <i class="fa-solid fa-headset w-6 text-purple-600"></i>
+                        <span>Customer Support</span>
+                    </a>
+                    <a href="contact.html" class="drawer-link flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-gbBlue font-medium">
+                        <i class="fa-solid fa-envelope w-6 text-purple-600"></i>
+                        <span>Contact</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="border-t pt-4 mt-6">
+                <a href="login.html" class="drawer-link w-full bg-gbBlue hover:bg-gbBlueDark text-white py-3 rounded-xl font-bold flex items-center justify-center space-x-2 shadow">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Login / Register</span>
+                </a>
+            </div>
+        </div>
+    </div>

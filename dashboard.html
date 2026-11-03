@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0056b3"><title>Customer Dashboard | GBbooking.com</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{colors:{gbBlue:'#0056b3',gbBlueDark:'#004085',gbGreen:'#28a745',gbOrange:'#f97316'}}}}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/shared-layout.css?v=20261101-dashboard">
+<style>body{font-family:Inter,sans-serif}.status{display:inline-flex;align-items:center;gap:.4rem;border-radius:999px;padding:.35rem .65rem;font-size:.7rem;font-weight:700}.status-pending{background:#fff7ed;color:#c2410c}.status-confirmed{background:#eff6ff;color:#1d4ed8}.status-completed{background:#ecfdf5;color:#047857}.booking-card{border:1px solid #e5e7eb;border-radius:1rem;background:#fff;transition:box-shadow .2s}.booking-card:hover{box-shadow:0 8px 24px rgb(15 23 42 / .06)}</style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+<div data-shared-component="header"></div>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-9">
+<header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-7">
+<div><p class="text-xs font-bold uppercase tracking-wider text-gbBlue">Customer account</p><h1 class="mt-1 text-2xl sm:text-3xl font-extrabold text-gray-900">Welcome, <span id="userName">Customer</span></h1><p class="mt-1 text-sm text-gray-500">Manage your bookings in one place.</p></div>
+<a href="index.html" class="inline-flex items-center justify-center gap-2 rounded-xl bg-gbBlue hover:bg-gbBlueDark text-white px-4 py-2.5 text-sm font-bold shadow-sm"><i class="fa-solid fa-plus"></i> Book a Service</a>
+</header>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+<div class="rounded-2xl bg-white border border-gray-200 p-4 flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-blue-50 text-gbBlue flex items-center justify-center"><i class="fa-solid fa-calendar-check"></i></span><div><p class="text-xs text-gray-500">New bookings</p><p id="newCount" class="text-xl font-extrabold">2</p></div></div>
+<div class="rounded-2xl bg-white border border-gray-200 p-4 flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-circle-check"></i></span><div><p class="text-xs text-gray-500">Completed</p><p id="completedCount" class="text-xl font-extrabold">1</p></div></div>
+<div class="rounded-2xl bg-white border border-gray-200 p-4 flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center"><i class="fa-solid fa-clock"></i></span><div><p class="text-xs text-gray-500">Awaiting confirmation</p><p id="pendingCount" class="text-xl font-extrabold">1</p></div></div>
+</div>
+<section class="mb-9">
+<div class="flex items-center justify-between mb-4"><div><h2 class="text-lg sm:text-xl font-extrabold text-gray-900">New Bookings</h2><p class="text-xs text-gray-500 mt-1">Your pending and confirmed bookings</p></div><span class="text-xs font-semibold text-gray-500" id="newSectionCount">2 bookings</span></div>
+<div id="newBookings" class="grid md:grid-cols-2 gap-4"></div>
+<div id="newEmpty" class="hidden rounded-2xl border border-dashed border-gray-300 bg-white py-10 text-center"><i class="fa-regular fa-calendar text-2xl text-gray-300"></i><p class="mt-2 text-sm font-semibold text-gray-600">No new bookings</p><p class="text-xs text-gray-400 mt-1">Your upcoming bookings will appear here.</p></div>
+</section>
+<section>
+<div class="flex items-center justify-between mb-4"><div><h2 class="text-lg sm:text-xl font-extrabold text-gray-900">Booking History</h2><p class="text-xs text-gray-500 mt-1">Completed services</p></div><span class="text-xs font-semibold text-gray-500" id="historySectionCount">1 completed</span></div>
+<div id="bookingHistory" class="grid md:grid-cols-2 gap-4"></div>
+<div id="historyEmpty" class="hidden rounded-2xl border border-dashed border-gray-300 bg-white py-10 text-center"><i class="fa-solid fa-clock-rotate-left text-2xl text-gray-300"></i><p class="mt-2 text-sm font-semibold text-gray-600">No completed bookings yet</p><p class="text-xs text-gray-400 mt-1">Completed bookings will be listed here.</p></div>
+</section>
+<p class="mt-8 text-center text-[11px] text-gray-400">Demo dashboard · Booking data is sample data until connected to your account.</p>
+</main>
+<div data-shared-component="mobile-bottom-nav"></div><div data-shared-component="footer"></div>
+<script src="/assets/js/layout.js?v=20261101"></script>
+<script>
+const displayName=localStorage.getItem('gbbooking_demo_name')||'Customer';
+document.getElementById('userName').textContent=displayName;
+let bookings=[
+{id:'GB-2048',service:'Home Electrical Repair',provider:'Gilgit Smart Care',location:'Gilgit',date:'Nov 04, 2026',time:'10:00 AM',amount:'PKR 1,500',status:'Pending'},
+{id:'GB-2037',service:'Airport Transfer',provider:'Mountain Ride Transport',location:'Skardu',date:'Nov 06, 2026',time:'02:30 PM',amount:'PKR 3,500',status:'Confirmed'},
+{id:'GB-1982',service:'Guest House Stay',provider:'Hunza Valley Guest House',location:'Karimabad, Hunza',date:'Oct 20, 2026',time:'Check-in: 2:00 PM',amount:'PKR 8,000',status:'Completed'}
+];
+const newContainer=document.getElementById('newBookings'),historyContainer=document.getElementById('bookingHistory');
+function iconFor(service){if(/electrical/i.test(service))return 'fa-bolt';if(/transfer|transport|ride/i.test(service))return 'fa-car';if(/stay|house|hotel/i.test(service))return 'fa-bed';return 'fa-calendar-check';}
+function card(b){const statusClass=b.status==='Pending'?'status-pending':b.status==='Confirmed'?'status-confirmed':'status-completed';const cancel=b.status==='Pending'?'<button type="button" data-cancel="'+b.id+'" class="rounded-lg border border-red-200 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50">Cancel booking</button>':'';return '<article class="booking-card p-4 sm:p-5"><div class="flex items-start gap-3"><span class="w-11 h-11 shrink-0 rounded-xl bg-blue-50 text-gbBlue flex items-center justify-center"><i class="fa-solid '+iconFor(b.service)+'"></i></span><div class="min-w-0 flex-1"><div class="flex flex-wrap items-center justify-between gap-2"><h3 class="font-bold text-gray-900 text-sm">'+b.service+'</h3><span class="status '+statusClass+'"><i class="fa-solid '+(b.status==='Pending'?'fa-clock':b.status==='Confirmed'?'fa-check':'fa-check-double')+'"></i>'+b.status+'</span></div><p class="text-xs text-gray-500 mt-1">'+b.provider+' · '+b.location+'</p></div></div><div class="grid grid-cols-2 gap-3 mt-4 border-t border-gray-100 pt-3"><div><p class="text-[10px] uppercase tracking-wide text-gray-400">Date & time</p><p class="text-xs font-semibold text-gray-700 mt-1">'+b.date+' · '+b.time+'</p></div><div class="text-right"><p class="text-[10px] uppercase tracking-wide text-gray-400">Total amount</p><p class="text-sm font-extrabold text-gray-900 mt-1">'+b.amount+'</p></div></div><div class="flex items-center justify-between gap-3 mt-4"><span class="text-[10px] text-gray-400">Booking ID: '+b.id+'</span>'+cancel+'</div></article>';}
+function render(){const active=bookings.filter(b=>b.status==='Pending'||b.status==='Confirmed'),completed=bookings.filter(b=>b.status==='Completed');newContainer.innerHTML=active.map(card).join('');historyContainer.innerHTML=completed.map(card).join('');document.getElementById('newCount').textContent=active.length;document.getElementById('completedCount').textContent=completed.length;document.getElementById('pendingCount').textContent=active.filter(b=>b.status==='Pending').length;document.getElementById('newSectionCount').textContent=active.length+' booking'+(active.length===1?'':'s');document.getElementById('historySectionCount').textContent=completed.length+' completed';document.getElementById('newEmpty').classList.toggle('hidden',active.length>0);document.getElementById('historyEmpty').classList.toggle('hidden',completed.length>0);}
+newContainer.addEventListener('click',e=>{const button=e.target.closest('[data-cancel]');if(!button)return;const booking=bookings.find(b=>b.id===button.dataset.cancel);if(!booking||booking.status!=='Pending')return;if(!confirm('Cancel this pending booking?'))return;bookings=bookings.filter(b=>b.id!==booking.id);render();});
+render();
+</script>
+</body></html>

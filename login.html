@@ -14,9 +14,9 @@
 body{font-family:Inter,sans-serif}.auth-bg{background:radial-gradient(circle at 15% 10%,#e8f2ff 0,transparent 38%),radial-gradient(circle at 90% 90%,#eaf8ef 0,transparent 35%),#f8fafc}
 .auth-input{width:100%;border:1px solid #d1d5db;border-radius:12px;padding:10px 12px;font-size:14px;outline:none;background:#fff;transition:border-color .2s,box-shadow .2s}
 .auth-input:focus{border-color:#0056b3;box-shadow:0 0 0 3px rgb(0 86 179 / .12)}
-.role-card{border:1px solid #e5e7eb;border-radius:14px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;background:white;transition:.2s}
-.role-card:has(input:checked){border-color:#0056b3;background:#eff6ff;box-shadow:0 0 0 1px #0056b3}
-.role-card input{accent-color:#0056b3}
+
+
+
 </style>
 </head>
 <body class="auth-bg min-h-screen text-gray-800">
@@ -33,13 +33,6 @@ body{font-family:Inter,sans-serif}.auth-bg{background:radial-gradient(circle at 
 <button id="signupTab" type="button" class="rounded-lg py-2.5 text-sm font-semibold text-gray-500" aria-selected="false">Sign Up</button>
 </div>
 <form id="authForm" class="space-y-3">
-<div id="roleField">
-<label class="block text-xs font-bold uppercase tracking-wide text-gray-600 mb-2">Continue as</label>
-<div class="grid grid-cols-2 gap-3">
-<label class="role-card"><input type="radio" name="role" value="customer" checked><span><span class="block text-sm font-bold text-gray-800">Customer</span></span></label>
-<label class="role-card"><input type="radio" name="role" value="provider"><span><span class="block text-sm font-bold text-gray-800">Provider</span></span></label>
-</div>
-</div>
 <div id="nameField" class="hidden">
 <label for="fullName" class="block text-xs font-bold text-gray-600 mb-1.5">Full name</label>
 <input id="fullName" name="name" autocomplete="name" class="auth-input" placeholder="Enter your full name">
@@ -70,16 +63,41 @@ body{font-family:Inter,sans-serif}.auth-bg{background:radial-gradient(circle at 
 <div data-shared-component="footer"></div>
 <script src="/assets/js/layout.js?v=20261101"></script>
 <script>
-const loginTab=document.getElementById('loginTab'),signupTab=document.getElementById('signupTab'),roleField=document.getElementById('roleField'),nameField=document.getElementById('nameField'),confirmField=document.getElementById('confirmField'),termsField=document.getElementById('termsField'),forgotLink=document.getElementById('forgotLink'),formTitle=document.getElementById('formTitle'),submitLabel=document.getElementById('submitLabel'),password=document.getElementById('password'),confirmPassword=document.getElementById('confirmPassword'),notice=document.getElementById('notice');
+const loginTab=document.getElementById('loginTab'),signupTab=document.getElementById('signupTab'),nameField=document.getElementById('nameField'),confirmField=document.getElementById('confirmField'),termsField=document.getElementById('termsField'),forgotLink=document.getElementById('forgotLink'),formTitle=document.getElementById('formTitle'),submitLabel=document.getElementById('submitLabel'),password=document.getElementById('password'),confirmPassword=document.getElementById('confirmPassword'),notice=document.getElementById('notice');
 let mode='login';
-function setMode(next){mode=next;const signup=mode==='signup';loginTab.className=signup?'rounded-lg py-2.5 text-sm font-semibold text-gray-500':'rounded-lg bg-white py-2.5 text-sm font-bold text-gbBlue shadow-sm';signupTab.className=signup?'rounded-lg bg-white py-2.5 text-sm font-bold text-gbBlue shadow-sm':'rounded-lg py-2.5 text-sm font-semibold text-gray-500';loginTab.setAttribute('aria-selected',String(!signup));signupTab.setAttribute('aria-selected',String(signup));roleField.classList.remove('hidden');nameField.classList.toggle('hidden',!signup);confirmField.classList.toggle('hidden',!signup);termsField.classList.toggle('hidden',!signup);termsField.classList.toggle('flex',signup);document.getElementById('fullName').required=signup;confirmPassword.required=signup;document.getElementById('terms').required=signup;password.autocomplete=signup?'new-password':'current-password';forgotLink.classList.toggle('hidden',signup);formTitle.textContent=signup?'Create your account':'Welcome back';submitLabel.textContent=signup?'Create Account':'Log In';notice.classList.add('hidden');}
+function setMode(next){
+  mode=next;const signup=mode==='signup';
+  loginTab.className=signup?'rounded-lg py-2.5 text-sm font-semibold text-gray-500':'rounded-lg bg-white py-2.5 text-sm font-bold text-gbBlue shadow-sm';
+  signupTab.className=signup?'rounded-lg bg-white py-2.5 text-sm font-bold text-gbBlue shadow-sm':'rounded-lg py-2.5 text-sm font-semibold text-gray-500';
+  loginTab.setAttribute('aria-selected',String(!signup));signupTab.setAttribute('aria-selected',String(signup));
+  nameField.classList.toggle('hidden',!signup);confirmField.classList.toggle('hidden',!signup);
+  termsField.classList.toggle('hidden',!signup);termsField.classList.toggle('flex',signup);
+  document.getElementById('fullName').required=signup;confirmPassword.required=signup;
+  document.getElementById('terms').required=signup;password.autocomplete=signup?'new-password':'current-password';
+  forgotLink.classList.toggle('hidden',signup);formTitle.textContent=signup?'Create your account':'Welcome back';
+  submitLabel.textContent=signup?'Create Account':'Log In';notice.classList.add('hidden');
+}
 loginTab.addEventListener('click',()=>setMode('login'));signupTab.addEventListener('click',()=>setMode('signup'));
-function toggleVisibility(input,button){const show=input.type==='password';input.type=show?'text':'password';button.innerHTML='<i class="fa-regular '+(show?'fa-eye-slash':'fa-eye')+'"></i>';button.setAttribute('aria-label',show?'Hide password':'Show password');}
+function toggleVisibility(input,button){
+  const show=input.type==='password';input.type=show?'text':'password';
+  button.innerHTML='<i class="fa-regular '+(show?'fa-eye-slash':'fa-eye')+'"></i>';
+  button.setAttribute('aria-label',show?'Hide password':'Show password');
+}
 document.getElementById('togglePassword').addEventListener('click',()=>toggleVisibility(password,document.getElementById('togglePassword')));
 document.getElementById('toggleConfirm').addEventListener('click',()=>toggleVisibility(confirmPassword,document.getElementById('toggleConfirm')));
-document.getElementById('authForm').addEventListener('submit',e=>{e.preventDefault();if(mode==='signup'&&password.value!==confirmPassword.value){notice.textContent='Your passwords do not match.';notice.classList.remove('hidden');return;}const email=document.getElementById('email').value.trim();const name=mode==='signup'?document.getElementById('fullName').value.trim():(email.split('@')[0]||'Customer');localStorage.setItem('gbbooking_demo_name',name||'Customer');const selectedRole=document.querySelector('input[name=role]:checked')?.value||'customer';localStorage.setItem('gbbooking_demo_role',selectedRole);window.location.href=selectedRole==='provider'?'provider-dashboard.html':'dashboard.html';});
-document.getElementById('googleButton').addEventListener('click',()=>{const selectedRole=document.querySelector('input[name=role]:checked')?.value||'customer';localStorage.setItem('gbbooking_demo_name',selectedRole==='provider'?'Provider':'Customer');localStorage.setItem('gbbooking_demo_role',selectedRole);window.location.href=selectedRole==='provider'?'provider-dashboard.html':'dashboard.html';});
-forgotLink.addEventListener('click',e=>{e.preventDefault();notice.textContent='Password reset will be available after Supabase authentication is connected.';notice.classList.remove('hidden');});
-</script>
+function showBackendNotice(message){notice.textContent=message;notice.classList.remove('hidden');}
+document.getElementById('authForm').addEventListener('submit',event=>{
+  event.preventDefault();
+  if(!event.currentTarget.reportValidity())return;
+  if(mode==='signup'&&password.value!==confirmPassword.value){showBackendNotice('Your passwords do not match.');return;}
+  showBackendNotice('Authentication is not connected yet. Once the backend is enabled, GBbooking will verify your account and automatically open the correct customer, provider or administrator dashboard.');
+});
+document.getElementById('googleButton').addEventListener('click',()=>{
+  showBackendNotice('Google authentication will be available after the authentication provider is connected. Your account role will be detected automatically after sign-in.');
+});
+forgotLink.addEventListener('click',event=>{
+  event.preventDefault();showBackendNotice('Password reset will be available after backend authentication is connected.');
+});
+</script>>
 </body>
 </html>

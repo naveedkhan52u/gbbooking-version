@@ -101,7 +101,8 @@ document.getElementById('authForm').addEventListener('submit',event=>{
   event.preventDefault();
   if(!event.currentTarget.reportValidity())return;
   if(mode==='signup'&&password.value!==confirmPassword.value){showBackendNotice('Your passwords do not match.');return;}
-  const selectedRole=document.querySelector('input[name="role"]:checked')?.value;\n  showBackendNotice(mode==='signup'?'Registration form is ready. The selected account type ('+(selectedRole==='provider'?'Provider':'User')+') will be saved when backend registration is connected.':'Login form is ready. After backend authentication is connected, your saved account role will determine the correct dashboard automatically.');
+  const selectedRole=document.querySelector('input[name="role"]:checked')?.value;
+  showBackendNotice(mode==='signup'?'Registration form is ready. The selected account type ('+(selectedRole==='provider'?'Provider':'User')+') will be saved when backend registration is connected.':'Login form is ready. After backend authentication is connected, your saved account role will determine the correct dashboard automatically.');
 });
 document.getElementById('googleButton').addEventListener('click',()=>{
   showBackendNotice('Google authentication will be available after the authentication provider is connected. For new registrations, choose User or Provider in the sign-up form first.');

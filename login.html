@@ -90,6 +90,8 @@ function setMode(next){
   formTitle.textContent=signup?'Create your account':'Welcome back';submitLabel.textContent=signup?'Create Account':'Log In';notice.classList.add('hidden');
 }
 loginTab.addEventListener('click',()=>setMode('login'));signupTab.addEventListener('click',()=>setMode('signup'));
+// Initialize login mode on first page load so hidden signup-only fields do not block form submission.
+setMode('login');
 function toggleVisibility(input,button){const show=input.type==='password';input.type=show?'text':'password';button.innerHTML='<i class="fa-regular '+(show?'fa-eye-slash':'fa-eye')+'"></i>';button.setAttribute('aria-label',show?'Hide password':'Show password');}
 document.getElementById('togglePassword').addEventListener('click',()=>toggleVisibility(password,document.getElementById('togglePassword')));
 document.getElementById('toggleConfirm').addEventListener('click',()=>toggleVisibility(confirmPassword,document.getElementById('toggleConfirm')));

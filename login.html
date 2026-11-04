@@ -72,9 +72,11 @@ body{font-family:Inter,sans-serif}.auth-bg{background:radial-gradient(circle at 
 </main>
 <div data-shared-component="mobile-bottom-nav"></div>
 <div data-shared-component="footer"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>
+<script src="/assets/js/supabase-client.js?v=20261104"></script>
 <script src="/assets/js/layout.js?v=20261101"></script>
 <script>
-const loginTab=document.getElementById('loginTab'),signupTab=document.getElementById('signupTab'),nameField=document.getElementById('nameField'),roleField=document.getElementById('roleField'),confirmField=document.getElementById('confirmField'),termsField=document.getElementById('termsField'),forgotLink=document.getElementById('forgotLink'),formTitle=document.getElementById('formTitle'),submitLabel=document.getElementById('submitLabel'),password=document.getElementById('password'),confirmPassword=document.getElementById('confirmPassword'),notice=document.getElementById('notice');
+const loginTab=document.getElementById('loginTab'),signupTab=document.getElementById('signupTab'),nameField=document.getElementById('nameField'),roleField=document.getElementById('roleField'),confirmField=document.getElementById('confirmField'),termsField=document.getElementById('termsField'),forgotLink=document.getElementById('forgotLink'),formTitle=document.getElementById('formTitle'),submitLabel=document.getElementById('submitLabel'),password=document.getElementById('password'),confirmPassword=document.getElementById('confirmPassword'),notice=document.getElementById('notice'),submitButton=document.getElementById('submitButton');
 let mode='login';
 function setMode(next){
   mode=next;const signup=mode==='signup';
@@ -83,33 +85,54 @@ function setMode(next){
   loginTab.setAttribute('aria-selected',String(!signup));signupTab.setAttribute('aria-selected',String(signup));
   nameField.classList.toggle('hidden',!signup);roleField.classList.toggle('hidden',!signup);roleField.querySelectorAll('input[name="role"]').forEach(input=>input.required=signup);confirmField.classList.toggle('hidden',!signup);
   termsField.classList.toggle('hidden',!signup);termsField.classList.toggle('flex',signup);
-  document.getElementById('fullName').required=signup;confirmPassword.required=signup;
-  document.getElementById('terms').required=signup;password.autocomplete=signup?'new-password':'current-password';
-  forgotLink.classList.toggle('hidden',signup);formTitle.textContent=signup?'Create your account':'Welcome back';
-  submitLabel.textContent=signup?'Create Account':'Log In';notice.classList.add('hidden');
+  document.getElementById('fullName').required=signup;confirmPassword.required=signup;document.getElementById('terms').required=signup;
+  password.autocomplete=signup?'new-password':'current-password';forgotLink.classList.toggle('hidden',signup);
+  formTitle.textContent=signup?'Create your account':'Welcome back';submitLabel.textContent=signup?'Create Account':'Log In';notice.classList.add('hidden');
 }
 loginTab.addEventListener('click',()=>setMode('login'));signupTab.addEventListener('click',()=>setMode('signup'));
-function toggleVisibility(input,button){
-  const show=input.type==='password';input.type=show?'text':'password';
-  button.innerHTML='<i class="fa-regular '+(show?'fa-eye-slash':'fa-eye')+'"></i>';
-  button.setAttribute('aria-label',show?'Hide password':'Show password');
-}
+function toggleVisibility(input,button){const show=input.type==='password';input.type=show?'text':'password';button.innerHTML='<i class="fa-regular '+(show?'fa-eye-slash':'fa-eye')+'"></i>';button.setAttribute('aria-label',show?'Hide password':'Show password');}
 document.getElementById('togglePassword').addEventListener('click',()=>toggleVisibility(password,document.getElementById('togglePassword')));
 document.getElementById('toggleConfirm').addEventListener('click',()=>toggleVisibility(confirmPassword,document.getElementById('toggleConfirm')));
-function showBackendNotice(message){notice.textContent=message;notice.classList.remove('hidden');}
-document.getElementById('authForm').addEventListener('submit',event=>{
-  event.preventDefault();
-  if(!event.currentTarget.reportValidity())return;
-  if(mode==='signup'&&password.value!==confirmPassword.value){showBackendNotice('Your passwords do not match.');return;}
+function showNotice(message,isError=false){notice.textContent=message;notice.classList.remove('hidden','bg-blue-50','border-blue-100','text-blue-800','bg-red-50','border-red-100','text-red-800');notice.classList.add(isError?'bg-red-50':'bg-blue-50',isError?'border-red-100':'border-blue-100',isError?'text-red-800':'text-blue-800');}
+function setBusy(busy){submitButton.disabled=busy;submitButton.classList.toggle('opacity-60',busy);submitButton.classList.toggle('cursor-not-allowed',busy);submitLabel.textContent=busy?'Please wait...':(mode==='signup'?'Create Account':'Log In');}
+document.getElementById('authForm').addEventListener('submit',async event=>{
+  event.preventDefault();if(!event.currentTarget.reportValidity())return;
+  if(!window.GBAuth){showNotice('Authentication service did not load. Refresh the page and try again.',true);return;}
+  if(mode==='signup'&&password.value!==confirmPassword.value){showNotice('Your passwords do not match.',true);return;}
+  const email=document.getElementById('email').value.trim(),fullName=document.getElementById('fullName').value.trim();
   const selectedRole=document.querySelector('input[name="role"]:checked')?.value;
-  showBackendNotice(mode==='signup'?'Registration form is ready. The selected account type ('+(selectedRole==='provider'?'Provider':'User')+') will be saved when backend registration is connected.':'Login form is ready. After backend authentication is connected, your saved account role will determine the correct dashboard automatically.');
+  setBusy(true);
+  try{
+    if(mode==='signup'){
+      const {data,error}=await GBAuth.client.auth.signUp({email,password:password.value,options:{data:{account_type:selectedRole,full_name:fullName},emailRedirectTo:window.location.origin+'/login.html'}});
+      if(error)throw error;
+      if(data.session){
+        const identity=await GBAuth.getIdentity();
+        if(!identity)throw new Error('Your account was created, but its profile is not available yet. Please try logging in shortly.');
+        window.location.replace(GBAuth.routeForRole(identity.profile.role));return;
+      }
+      showNotice('Registration submitted. Check your email to confirm your account, then log in. Your selected account type is saved with your registration.');
+      event.currentTarget.reset();setMode('login');
+    }else{
+      const {error}=await GBAuth.client.auth.signInWithPassword({email,password:password.value});
+      if(error)throw error;
+      const identity=await GBAuth.getIdentity();
+      if(!identity){await GBAuth.client.auth.signOut();throw new Error('Your account profile could not be found. Contact support.');}
+      window.location.replace(GBAuth.routeForRole(identity.profile.role));return;
+    }
+  }catch(error){showNotice(error.message||'Authentication failed. Please try again.',true);}
+  finally{setBusy(false);}
 });
-document.getElementById('googleButton').addEventListener('click',()=>{
-  showBackendNotice('Google authentication will be available after the authentication provider is connected. For new registrations, choose User or Provider in the sign-up form first.');
+document.getElementById('googleButton').addEventListener('click',async()=>{
+  if(!window.GBAuth){showNotice('Authentication service did not load. Refresh the page and try again.',true);return;}
+  if(mode==='signup'){showNotice('For a new account, use the registration form so your User or Provider role is saved. Google registration will be enabled after role-aware OAuth is configured.');return;}
+  try{const {error}=await GBAuth.client.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/login.html'}});if(error)throw error;}
+  catch(error){showNotice(error.message||'Google sign-in is not available yet. Check that Google is enabled in Supabase Auth.',true);}
 });
-forgotLink.addEventListener('click',event=>{
-  event.preventDefault();showBackendNotice('Password reset will be available after backend authentication is connected.');
-});
+forgotLink.addEventListener('click',event=>{event.preventDefault();showNotice('Password recovery page will be connected in the next authentication step.');});
+const authError=new URLSearchParams(window.location.search).get('auth_error');
+if(authError==='profile')showNotice('Your account profile could not be loaded. Please contact support before trying again.',true);
+if(window.GBAuth)GBAuth.redirectSignedInUser();
 </script>
 </body>
 </html>

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>document.documentElement.classList.add("auth-pending")</script>
+<style>html.auth-pending body{visibility:hidden}</style>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0056b3"><meta name="robots" content="noindex,nofollow,noarchive">
 <title>Admin Dashboard | GBbooking.com</title>
@@ -59,6 +61,9 @@ body{font-family:Inter,sans-serif}.admin-card{background:#fff;border:1px solid #
 </main>
 <div data-shared-component="mobile-bottom-nav"></div><div data-shared-component="footer"></div>
 <script src="/assets/js/layout.js?v=20261102-admin"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>
+<script src="/assets/js/supabase-client.js?v=20261104"></script>
+<script>window.GBAuth.requireRole(["admin"]);</script>
 <script>
 (function(){
 const key='gbbooking_provider_demo_bookings';
@@ -80,7 +85,7 @@ function list(id,empty,items,section){document.getElementById(id).innerHTML=item
 function render(){const pending=bookings.filter(b=>b.status==='Pending'),confirmed=bookings.filter(b=>b.status==='Confirmed'),completed=bookings.filter(b=>b.status==='Completed'),cancelled=bookings.filter(b=>b.status==='Cancelled');list('newBookings','newEmpty',pending,'pending');list('confirmedBookings','confirmedEmpty',confirmed,'confirmed');list('completedBookings','completedEmpty',completed,'completed');const gross=completed.reduce((s,b)=>s+Number(b.amount||0),0);document.getElementById('totalBookings').textContent=bookings.length;document.getElementById('totalRevenue').textContent=money(gross);document.getElementById('totalCommission').textContent=money(gross*.1);document.getElementById('pendingCount').textContent=pending.length;document.getElementById('confirmedCount').textContent=confirmed.length;document.getElementById('completedCount').textContent=completed.length;document.getElementById('cancelledCount').textContent=cancelled.length;document.getElementById('newCountLabel').textContent=pending.length+' bookings';document.getElementById('confirmedCountLabel').textContent=confirmed.length+' bookings';document.getElementById('completedCountLabel').textContent=completed.length+' bookings';}
 document.querySelector('main').addEventListener('click',e=>{const btn=e.target.closest('[data-action]');if(!btn)return;const b=bookings.find(x=>x.id===btn.dataset.id);if(!b)return;if(btn.dataset.action==='accept'&&b.status==='Pending')b.status='Confirmed';else if(btn.dataset.action==='cancel'&&b.status==='Pending'){if(!confirm('Cancel this booking?'))return;b.status='Cancelled';}else if(btn.dataset.action==='complete'&&b.status==='Confirmed'){if(!confirm('Mark this booking as completed?'))return;b.status='Completed';}save();render();});
 document.querySelectorAll('.admin-nav-link').forEach(link=>link.addEventListener('click',()=>{document.querySelectorAll('.admin-nav-link').forEach(x=>x.classList.remove('active'));link.classList.add('active');}));
-document.getElementById('adminLogout').addEventListener('click',()=>{window.location.href='/admin/';});
+// Supabase sign-out is attached by GBAuth after admin role verification.
 render();
 })();
 </script>

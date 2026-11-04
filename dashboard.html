@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>document.documentElement.classList.add("auth-pending")</script>
+<style>html.auth-pending body{visibility:hidden}</style>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0056b3"><title>Customer Dashboard | GBbooking.com</title>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -36,6 +38,9 @@
 </main>
 <div data-shared-component="mobile-bottom-nav"></div><div data-shared-component="footer"></div>
 <script src="/assets/js/layout.js?v=20261101"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>
+<script src="/assets/js/supabase-client.js?v=20261104"></script>
+<script>window.GBAuth.requireRole(["customer"]);</script>
 <script>
 const displayName=localStorage.getItem('gbbooking_demo_name')||'Customer';
 document.getElementById('userName').textContent=displayName;

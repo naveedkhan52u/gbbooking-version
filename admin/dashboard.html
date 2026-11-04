@@ -63,7 +63,7 @@ body{font-family:Inter,sans-serif}.admin-card{background:#fff;border:1px solid #
 <script src="/assets/js/layout.js?v=20261102-admin"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js"></script>
 <script src="/assets/js/supabase-client.js?v=20261104"></script>
-<script>window.GBAuth.requireRole(["admin"]);</script>
+<script>window.GBAuth.requireRole(["admin"]);document.addEventListener("gbbooking:authenticated",event=>{const label=event.detail.profile.full_name||event.detail.user.email||"Administrator";const heading=document.querySelector("main > header");if(heading){const name=heading.querySelector(".text-xs.font-bold.text-gray-800");if(name)name.textContent=label;const sub=heading.querySelector(".text-\\[10px\\].text-gray-400");if(sub)sub.textContent=event.detail.user.email||"Authenticated administrator";}});</script>
 <script>
 (function(){
 const key='gbbooking_provider_demo_bookings';

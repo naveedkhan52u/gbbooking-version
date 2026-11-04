@@ -96,7 +96,9 @@ document.getElementById('toggleConfirm').addEventListener('click',()=>toggleVisi
 function showNotice(message,isError=false){notice.textContent=message;notice.classList.remove('hidden','bg-blue-50','border-blue-100','text-blue-800','bg-red-50','border-red-100','text-red-800');notice.classList.add(isError?'bg-red-50':'bg-blue-50',isError?'border-red-100':'border-blue-100',isError?'text-red-800':'text-blue-800');}
 function setBusy(busy){submitButton.disabled=busy;submitButton.classList.toggle('opacity-60',busy);submitButton.classList.toggle('cursor-not-allowed',busy);submitLabel.textContent=busy?'Please wait...':(mode==='signup'?'Create Account':'Log In');}
 document.getElementById('authForm').addEventListener('submit',async event=>{
-  event.preventDefault();if(!event.currentTarget.reportValidity())return;
+  event.preventDefault();
+  const form=event.currentTarget;
+  if(!form.reportValidity())return;
   if(!window.GBAuth){showNotice('Authentication service did not load. Refresh the page and try again.',true);return;}
   if(mode==='signup'&&password.value!==confirmPassword.value){showNotice('Your passwords do not match.',true);return;}
   const email=document.getElementById('email').value.trim(),fullName=document.getElementById('fullName').value.trim();
@@ -112,7 +114,7 @@ document.getElementById('authForm').addEventListener('submit',async event=>{
         window.location.replace(GBAuth.routeForRole(identity.profile.role));return;
       }
       showNotice('Registration submitted. Check your email to confirm your account, then log in. Your selected account type is saved with your registration.');
-      event.currentTarget.reset();setMode('login');
+      form.reset();setMode('login');
     }else{
       const {error}=await GBAuth.client.auth.signInWithPassword({email,password:password.value});
       if(error)throw error;

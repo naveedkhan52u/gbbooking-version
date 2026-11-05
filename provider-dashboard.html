@@ -20,12 +20,12 @@ body{font-family:Inter,sans-serif}.provider-card{background:#fff;border:1px soli
 <div data-shared-component="header"></div>
 <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-9">
 <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-7">
-<div><div class="flex items-center gap-2"><span class="text-xs font-extrabold uppercase tracking-wider text-gbBlue">Provider workspace</span><span class="rounded-full bg-amber-50 text-amber-700 px-2 py-1 text-[10px] font-bold">Demo mode</span></div><h1 class="mt-1 text-2xl sm:text-3xl font-extrabold text-gray-900">Welcome, <span id="providerName">Provider</span></h1><p class="mt-1 text-sm text-gray-500">Manage your bookings, earnings and service listings.</p></div>
+<div><div class="flex items-center gap-2"><span class="text-xs font-extrabold uppercase tracking-wider text-gbBlue">Provider workspace</span><span id="providerConnectionStatus" class="rounded-full bg-blue-50 text-blue-700 px-2 py-1 text-[10px] font-bold">Connecting...</span></div><h1 class="mt-1 text-2xl sm:text-3xl font-extrabold text-gray-900">Welcome, <span id="providerName">Provider</span></h1><p class="mt-1 text-sm text-gray-500">Manage your bookings, earnings and service listings.</p></div>
 <button id="openServiceForm" type="button" class="inline-flex items-center justify-center gap-2 rounded-xl bg-gbBlue hover:bg-gbBlueDark text-white px-4 py-3 text-sm font-extrabold shadow-sm"><i class="fa-solid fa-plus"></i> Add Services</button>
 </header>
 
 <section aria-label="Provider overview" class="mb-8">
-<div class="flex items-center justify-between mb-3"><div><h2 class="text-lg font-extrabold text-gray-900">Overview</h2><p class="text-xs text-gray-500 mt-1">Your booking and earnings summary</p></div><span class="text-[11px] text-gray-400">Updated from demo activity</span></div>
+<div class="flex items-center justify-between mb-3"><div><h2 class="text-lg font-extrabold text-gray-900">Overview</h2><p class="text-xs text-gray-500 mt-1">Your booking and earnings summary</p></div><span class="text-[11px] text-gray-400">Live Supabase data</span></div>
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
 <article class="provider-card p-4 flex items-center gap-3"><span class="metric-icon bg-blue-50 text-gbBlue"><i class="fa-solid fa-calendar-check text-lg"></i></span><div><p class="text-xs text-gray-500 font-medium">Total Booking</p><p id="totalBookings" class="text-2xl font-extrabold text-gray-900">0</p><p class="text-[10px] text-gray-400">All booking requests</p></div></article>
 <article class="provider-card p-4 flex items-center gap-3"><span class="metric-icon bg-emerald-50 text-emerald-600"><i class="fa-solid fa-wallet text-lg"></i></span><div><p class="text-xs text-gray-500 font-medium">Total Earning</p><p id="totalEarnings" class="text-2xl font-extrabold text-gray-900">PKR 0</p><p class="text-[10px] text-gray-400">Completed booking value</p></div></article>
@@ -33,7 +33,7 @@ body{font-family:Inter,sans-serif}.provider-card{background:#fff;border:1px soli
 </div>
 </section>
 
-<section class="mb-8" aria-labelledby="newBookingsTitle">
+<section class="mb-8"><div class="flex items-end justify-between gap-3 mb-4"><div><h2 class="text-lg sm:text-xl font-extrabold">My Services</h2><p class="text-xs text-gray-500 mt-1">Your submitted service listings and review status</p></div><span id="myServicesCount" class="text-xs font-bold text-gray-500">0 services</span></div><div id="myServices" class="grid lg:grid-cols-2 gap-4"></div><div id="myServicesEmpty" class="provider-card border-dashed p-8 text-center"><p class="text-sm font-bold text-gray-600">No services listed yet</p></div></section><section class="mb-8" aria-labelledby="newBookingsTitle">
 <div class="flex items-end justify-between gap-3 mb-4"><div><h2 id="newBookingsTitle" class="text-lg sm:text-xl font-extrabold text-gray-900">New Bookings</h2><p class="text-xs text-gray-500 mt-1">Requests waiting for your response</p></div><span id="newBookingCount" class="text-xs font-bold text-gray-500">0 bookings</span></div>
 <div id="newBookings" class="grid lg:grid-cols-2 gap-4"></div>
 <div id="newBookingsEmpty" class="hidden provider-card border-dashed p-9 text-center"><i class="fa-regular fa-calendar text-2xl text-gray-300"></i><p class="mt-2 text-sm font-bold text-gray-600">No new booking requests</p><p class="mt-1 text-xs text-gray-400">New pending requests will appear here.</p></div>
@@ -50,7 +50,7 @@ body{font-family:Inter,sans-serif}.provider-card{background:#fff;border:1px soli
 <div id="bookingHistory" class="grid lg:grid-cols-2 gap-4"></div>
 <div id="bookingHistoryEmpty" class="hidden provider-card border-dashed p-9 text-center"><i class="fa-solid fa-clock-rotate-left text-2xl text-gray-300"></i><p class="mt-2 text-sm font-bold text-gray-600">No completed bookings yet</p><p class="mt-1 text-xs text-gray-400">Completed bookings will be listed here.</p></div>
 </section>
-<p class="mt-8 text-center text-[11px] text-gray-400">Demo provider dashboard. Changes are saved in this browser only. Live booking data and service verification will be connected to Supabase later.</p>
+<p id="providerDashboardNotice" class="mt-8 text-center text-[11px] text-gray-500" role="status">Connecting to your account...</p>
 </main>
 
 <!-- Add service modal -->
@@ -70,7 +70,7 @@ body{font-family:Inter,sans-serif}.provider-card{background:#fff;border:1px soli
 </div>
 <div><label class="field-label" for="serviceRegion">Choose Region <span class="text-red-500">*</span></label><select class="field" id="serviceRegion" name="region" required><option value="">Select your service region</option><option value="Gilgit">Gilgit City</option><option value="Skardu">Skardu & Baltistan</option><option value="Hunza">Hunza Valley</option><option value="Ghizer">Ghizer (Phander)</option><option value="Diamer">Diamer (Chilas)</option><option value="Nagar">Nagar Valley</option><option value="Ghanche">Ghanche (Khaplu)</option><option value="Astore">Astore & Rama</option></select></div>
 <div><label class="field-label" for="serviceAddress">Complete Address (Area / City) <span class="text-red-500">*</span></label><input class="field" id="serviceAddress" name="address" required maxlength="180" placeholder="e.g. Jutial, Gilgit"></div>
-<div><label class="field-label" for="providerCnic">CNIC Number <span class="text-red-500">*</span></label><input class="field" id="providerCnic" name="cnic" type="text" inputmode="numeric" pattern="[0-9]{13}" maxlength="13" minlength="13" required placeholder="13 digit CNIC without dashes"><p class="mt-1 text-[10px] text-gray-400">Enter exactly 13 digits, without dashes.</p></div>
+
 <div><label class="field-label" for="servicePrice">Price (PKR) <span class="text-red-500">*</span></label><div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-500">PKR</span><input class="field pl-14" id="servicePrice" name="price" type="number" inputmode="numeric" min="1" step="1" required placeholder="Enter your service price"></div></div>
 <div><span class="field-label">Charging Type <span class="text-red-500">*</span></span><p class="text-[10px] text-gray-400 mb-2">Select one or more ways customers can be charged.</p><div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
 <label class="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-3 text-xs font-semibold text-gray-700 cursor-pointer hover:border-blue-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"><input class="charging-type accent-blue-600" type="checkbox" name="chargingType" value="Per Day"><span>Per Day</span></label>
@@ -78,7 +78,7 @@ body{font-family:Inter,sans-serif}.provider-card{background:#fff;border:1px soli
 <label class="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-3 text-xs font-semibold text-gray-700 cursor-pointer hover:border-blue-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"><input class="charging-type accent-blue-600" type="checkbox" name="chargingType" value="Per Night"><span>Per Night</span></label>
 <label class="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-3 text-xs font-semibold text-gray-700 cursor-pointer hover:border-blue-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"><input class="charging-type accent-blue-600" type="checkbox" name="chargingType" value="Per Month"><span>Per Month</span></label>
 </div><p class="mt-1 text-[10px] text-gray-400">Choose the applicable charging type(s) for this service.</p></div>
-<div><label class="field-label" for="serviceImages">Upload Service Images <span class="text-red-500">*</span></label><input class="field" id="serviceImages" name="images" type="file" accept="image/*" multiple required><p class="mt-1 text-[10px] text-gray-400">Upload at least 1 image and no more than 2 images.</p><div id="imagePreview" class="flex gap-2 mt-3"></div></div>
+<div><label class="field-label" for="serviceDescription">Service Description</label><textarea class="field" id="serviceDescription" rows="3" maxlength="1500" placeholder="Describe your service"></textarea></div><p class="text-[11px] text-gray-500">Service image uploads will be enabled after Storage is configured.</p>
 <div id="serviceFormNotice" class="hidden rounded-xl px-3 py-2.5 text-xs font-semibold" role="status"></div>
 <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-gray-100 pt-4">
 <button id="cancelServiceForm" type="button" class="action-btn border border-gray-200 text-gray-600 hover:bg-gray-50">Cancel</button>
@@ -96,71 +96,62 @@ body{font-family:Inter,sans-serif}.provider-card{background:#fff;border:1px soli
 <script>window.GBAuth.requireRole(["provider"]);document.addEventListener("gbbooking:authenticated",event=>{const name=event.detail.profile.full_name||event.detail.user.email||"Provider";document.getElementById("providerName").textContent=name;});</script>
 <script>
 (function(){
-const name=localStorage.getItem('gbbooking_demo_name')||'Provider';
-document.getElementById('providerName').textContent=name;
-const bookingKey='gbbooking_provider_demo_bookings';
-const serviceKey='gbbooking_provider_demo_services';
-const seeded=[
-{id:'GB-P1048',customer:'Ahsan Ali',phone:'923001234567',service:'Home Electrical Repair',location:'Jutial, Gilgit',date:'Nov 04, 2026',time:'10:00 AM',amount:4500,status:'Pending'},
-{id:'GB-P1042',customer:'Sara Karim',phone:'923451234567',service:'Airport Transfer',location:'Skardu Airport',date:'Nov 06, 2026',time:'02:30 PM',amount:8500,status:'Pending'},
-{id:'GB-P1037',customer:'Hamza Khan',phone:'923331234567',service:'Guest House Stay',location:'Karimabad, Hunza',date:'Nov 02, 2026',time:'Check-in 2:00 PM',amount:12000,status:'Confirmed'},
-{id:'GB-P0982',customer:'Maryam Shah',phone:'923001112233',service:'Plumbing Repair',location:'Sakwar, Gilgit',date:'Oct 20, 2026',time:'11:00 AM',amount:3000,status:'Completed'}
-];
-let bookings;
-try{const saved=JSON.parse(localStorage.getItem(bookingKey));bookings=Array.isArray(saved)?saved:seeded;}catch(_){bookings=seeded;}
-function saveBookings(){localStorage.setItem(bookingKey,JSON.stringify(bookings));}
-function money(value){return 'PKR '+Number(value||0).toLocaleString('en-PK');}
-function escapeHTML(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
-function bookingCard(b,section){
-const badge=b.status.toLowerCase();let actions='';
-if(section==='new')actions='<button type="button" data-action="accept" data-id="'+escapeHTML(b.id)+'" class="action-btn bg-gbBlue hover:bg-gbBlueDark text-white"><i class="fa-solid fa-check"></i> Accept</button><button type="button" data-action="cancel" data-id="'+escapeHTML(b.id)+'" class="action-btn border border-red-200 text-red-600 hover:bg-red-50"><i class="fa-solid fa-xmark"></i> Cancel</button>';
-if(section==='accepted')actions='<button type="button" data-action="complete" data-id="'+escapeHTML(b.id)+'" class="action-btn bg-emerald-600 hover:bg-emerald-700 text-white"><i class="fa-solid fa-check-double"></i> Mark as Completed</button>';
-return '<article class="provider-card p-4 sm:p-5"><div class="flex items-start justify-between gap-3"><div class="min-w-0"><p class="text-[10px] font-extrabold tracking-wider text-gray-400 uppercase">'+escapeHTML(b.id)+'</p><h3 class="mt-1 text-sm font-extrabold text-gray-900">'+escapeHTML(b.service)+'</h3><p class="mt-1 text-xs text-gray-500">Customer: <span class="font-semibold text-gray-700">'+escapeHTML(b.customer)+'</span></p></div><span class="booking-status '+badge+'">'+escapeHTML(b.status)+'</span></div><div class="grid grid-cols-2 gap-3 mt-4 border-t border-gray-100 pt-3"><div><p class="text-[10px] uppercase tracking-wide text-gray-400">Date & time</p><p class="mt-1 text-xs font-semibold text-gray-700">'+escapeHTML(b.date)+' · '+escapeHTML(b.time)+'</p></div><div><p class="text-[10px] uppercase tracking-wide text-gray-400">Booking amount</p><p class="mt-1 text-sm font-extrabold text-gray-900">'+money(b.amount)+'</p></div><div class="col-span-2"><p class="text-[10px] uppercase tracking-wide text-gray-400">Location</p><p class="mt-1 text-xs font-semibold text-gray-700"><i class="fa-solid fa-location-dot text-gbOrange mr-1"></i>'+escapeHTML(b.location)+'</p></div><div class="col-span-2"><p class="text-[10px] uppercase tracking-wide text-gray-400">Customer phone</p><p class="mt-1 text-xs font-semibold text-gray-700">'+escapeHTML(b.phone)+'</p></div></div>'+(actions?'<div class="flex flex-wrap gap-2 mt-4 border-t border-gray-100 pt-3">'+actions+'</div>':'')+'</article>';
+const db=window.GBAuth?.client,$=id=>document.getElementById(id);
+let me=null,services=[],bookings=[];
+const cash=n=>'PKR '+Number(n||0).toLocaleString('en-PK');
+const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function note(t,bad=false){$('providerDashboardNotice').textContent=t;$('providerDashboardNotice').className='mt-8 text-center text-[11px] '+(bad?'text-red-600':'text-gray-500');}
+function formNote(t,bad=false){const n=$('serviceFormNotice');n.textContent=t;n.className='block rounded-xl px-3 py-2.5 text-xs font-semibold '+(bad?'bg-red-50 text-red-700':'bg-emerald-50 text-emerald-800');}
+function badge(s){return ({pending:'pending',pending_review:'pending',confirmed:'confirmed',completed:'completed',rejected:'cancelled',cancelled:'cancelled'})[s]||'pending';}
+function renderServices(){
+$('myServicesCount').textContent=services.length+' services';$('myServicesEmpty').classList.toggle('hidden',services.length>0);
+$('myServices').innerHTML=services.map(s=>'<article class="provider-card p-4"><div class="flex justify-between gap-3"><div><h3 class="font-extrabold text-sm">'+safe(s.title)+'</h3><p class="text-xs text-gray-500 mt-1">'+safe(s.category)+' · '+safe(s.region||s.city||'')+'</p></div><span class="booking-status '+badge(s.status)+'">'+safe(String(s.status).replaceAll('_',' '))+'</span></div><div class="mt-3 border-t pt-3 text-sm font-extrabold">'+cash(s.price_amount)+' <span class="text-xs font-normal text-gray-500">/ '+safe(s.price_unit)+'</span></div></article>').join('');
 }
-function renderList(id,emptyId,items,section){document.getElementById(id).innerHTML=items.map(b=>bookingCard(b,section)).join('');document.getElementById(emptyId).classList.toggle('hidden',items.length>0);}
-function render(){
-const pending=bookings.filter(b=>b.status==='Pending'),accepted=bookings.filter(b=>b.status==='Confirmed'),completed=bookings.filter(b=>b.status==='Completed');
-renderList('newBookings','newBookingsEmpty',pending,'new');renderList('acceptedBookings','acceptedBookingsEmpty',accepted,'accepted');renderList('bookingHistory','bookingHistoryEmpty',completed,'history');
-document.getElementById('newBookingCount').textContent=pending.length+' booking'+(pending.length===1?'':'s');document.getElementById('acceptedBookingCount').textContent=accepted.length+' booking'+(accepted.length===1?'':'s');document.getElementById('historyBookingCount').textContent=completed.length+' completed';
-const gross=completed.reduce((sum,b)=>sum+Number(b.amount||0),0);document.getElementById('totalBookings').textContent=bookings.length;document.getElementById('totalEarnings').textContent=money(gross);document.getElementById('totalCommission').textContent=money(gross*.10);
+function card(b,kind){
+const service=services.find(s=>s.id===b.service_id)||{};
+let buttons=kind==='new'?'<button class="action-btn bg-gbBlue text-white" data-action="confirmed" data-id="'+b.id+'">Accept</button><button class="action-btn border border-red-200 text-red-600" data-action="rejected" data-id="'+b.id+'">Reject</button>':kind==='accepted'?'<button class="action-btn bg-emerald-600 text-white" data-action="completed" data-id="'+b.id+'">Mark Completed</button>':'';
+return '<article class="provider-card p-4"><div class="flex justify-between gap-3"><div><h3 class="font-extrabold text-sm">'+safe(service.title||'Service booking')+'</h3><p class="text-xs text-gray-500 mt-1">Booking '+safe(b.id.slice(0,8))+'</p></div><span class="booking-status '+badge(b.status)+'">'+safe(b.status)+'</span></div><div class="grid grid-cols-2 gap-3 mt-4 border-t pt-3"><div><p class="text-[10px] text-gray-400">DATE</p><p class="text-xs">'+safe(new Date(b.scheduled_for).toLocaleString())+'</p></div><div><p class="text-[10px] text-gray-400">AMOUNT</p><p class="text-sm font-bold">'+cash(b.amount)+'</p></div><div class="col-span-2"><p class="text-[10px] text-gray-400">LOCATION</p><p class="text-xs">'+safe(b.service_location||'Not provided')+'</p></div></div>'+(buttons?'<div class="flex gap-2 mt-4 border-t pt-3">'+buttons+'</div>':'')+'</article>';
 }
-document.querySelector('main').addEventListener('click',e=>{
-const button=e.target.closest('[data-action]');if(!button)return;
-const booking=bookings.find(b=>b.id===button.dataset.id);if(!booking)return;
-if(button.dataset.action==='accept'&&booking.status==='Pending'){booking.status='Confirmed';}
-else if(button.dataset.action==='cancel'&&booking.status==='Pending'){if(!confirm('Cancel this booking request?'))return;booking.status='Cancelled';}
-else if(button.dataset.action==='complete'&&booking.status==='Confirmed'){if(!confirm('Mark this booking as completed?'))return;booking.status='Completed';}
-saveBookings();render();
+function renderBookings(){
+const p=bookings.filter(x=>x.status==='pending'),a=bookings.filter(x=>x.status==='confirmed'),c=bookings.filter(x=>x.status==='completed');
+[['newBookings','newBookingsEmpty',p,'new'],['acceptedBookings','acceptedBookingsEmpty',a,'accepted'],['bookingHistory','bookingHistoryEmpty',c,'history']].forEach(([id,empty,list,k])=>{$(id).innerHTML=list.map(x=>card(x,k)).join('');$(empty).classList.toggle('hidden',list.length>0);});
+$('newBookingCount').textContent=p.length+' bookings';$('acceptedBookingCount').textContent=a.length+' bookings';$('historyBookingCount').textContent=c.length+' completed';
+const total=c.reduce((n,x)=>n+Number(x.amount||0),0);$('totalBookings').textContent=bookings.length;$('totalEarnings').textContent=cash(total);$('totalCommission').textContent=cash(total*.1);
+}
+async function load(){
+if(!db)throw Error('Supabase client did not load. Refresh the page.');
+const {data:u,error:ue}=await db.auth.getUser();if(ue)throw ue;if(!u.user)throw Error('Session expired. Please log in again.');
+const {data:p,error:pe}=await db.from('profiles').select('id,role,full_name').eq('id',u.user.id).single();if(pe)throw pe;if(p.role!=='provider')throw Error('This account is not a provider.');
+me=u.user;$('providerName').textContent=p.full_name||u.user.email;
+const sr=await db.from('provider_services').select('*').eq('provider_id',me.id).order('created_at',{ascending:false});if(sr.error)throw sr.error;services=sr.data||[];renderServices();
+const br=await db.from('bookings').select('id,service_id,scheduled_for,service_location,status,amount,created_at').eq('provider_id',me.id).order('created_at',{ascending:false});if(br.error)throw br.error;bookings=br.data||[];renderBookings();
+$('providerConnectionStatus').textContent='Live Supabase';$('providerConnectionStatus').className='rounded-full bg-emerald-50 text-emerald-700 px-2 py-1 text-[10px] font-bold';note('Provider dashboard connected. Your own services and bookings are loaded from Supabase.');
+}
+const modal=$('serviceModal'),form=$('serviceForm');
+function close(){modal.classList.add('hidden');modal.classList.remove('flex');document.body.style.overflow='';}
+$('openServiceForm').addEventListener('click',()=>{modal.classList.remove('hidden');modal.classList.add('flex');document.body.style.overflow='hidden';});
+$('closeServiceForm').addEventListener('click',close);$('cancelServiceForm').addEventListener('click',close);modal.addEventListener('click',e=>{if(e.target===modal)close();});
+form.addEventListener('submit',async e=>{
+e.preventDefault();if(!form.reportValidity())return;
+const price=Number($('servicePrice').value),types=[...document.querySelectorAll('input[name="chargingType"]:checked')].map(x=>x.value);
+if(!Number.isInteger(price)||price<1||!types.length){formNote('Enter a valid price and select a charging type.',true);return;}
+const phone=$('phoneNumber').value,wa=$('whatsappNumber').value;
+if(!/^92\d{10}$/.test(phone)||!/^92\d{10}$/.test(wa)){formNote('Both phone numbers must be 12 digits starting with 92.',true);return;}
+const payload={provider_id:me.id,title:$('serviceName').value.trim(),category:$('serviceCategory').value,description:$('serviceDescription').value.trim()||null,region:$('serviceRegion').value,city:$('serviceRegion').value,address:$('serviceAddress').value.trim(),phone,whatsapp_number:wa,price_amount:price,price_unit:types.join(', ').toLowerCase(),currency:'PKR',status:'pending_review',is_active:true};
+const btn=form.querySelector('button[type="submit"]');btn.disabled=true;btn.textContent='Submitting...';
+try{const {error}=await db.from('provider_services').insert(payload);if(error)throw error;formNote('Service submitted. It is waiting for admin approval.');form.reset();await load();setTimeout(close,1300);}
+catch(err){formNote(err.message||'Service submission failed.',true);}
+finally{btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-paper-plane"></i> Submit for Admin Verification';}
 });
-
-const modal=document.getElementById('serviceModal'),form=document.getElementById('serviceForm'),imageInput=document.getElementById('serviceImages'),preview=document.getElementById('imagePreview'),notice=document.getElementById('serviceFormNotice');
-function openModal(){modal.classList.remove('hidden');modal.classList.add('flex');document.body.style.overflow='hidden';document.getElementById('serviceName').focus();}
-function closeModal(){modal.classList.add('hidden');modal.classList.remove('flex');document.body.style.overflow='';}
-document.getElementById('openServiceForm').addEventListener('click',openModal);document.getElementById('closeServiceForm').addEventListener('click',closeModal);document.getElementById('cancelServiceForm').addEventListener('click',closeModal);modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.classList.contains('hidden'))closeModal();});
-imageInput.addEventListener('change',()=>{
-preview.innerHTML='';const files=Array.from(imageInput.files||[]);if(files.length>2){imageInput.setCustomValidity('Please choose no more than 2 images.');imageInput.reportValidity();imageInput.value='';return;}imageInput.setCustomValidity('');
-files.forEach(file=>{if(!file.type.startsWith('image/'))return;const url=URL.createObjectURL(file);const img=document.createElement('img');img.src=url;img.alt='Selected service image';img.className='image-preview';img.onload=()=>URL.revokeObjectURL(url);preview.appendChild(img);});
+document.querySelector('main').addEventListener('click',async e=>{
+const b=e.target.closest('[data-action]');if(!b)return;
+if(!confirm(({confirmed:'Accept this booking?',rejected:'Reject this booking?',completed:'Mark this booking completed?'})[b.dataset.action]))return;
+b.disabled=true;
+try{const {error}=await db.from('bookings').update({status:b.dataset.action}).eq('id',b.dataset.id).eq('provider_id',me.id);if(error)throw error;await load();}
+catch(err){note(err.message,true);b.disabled=false;}
 });
-['whatsappNumber','phoneNumber','providerCnic'].forEach(id=>document.getElementById(id).addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'');}));
-form.addEventListener('submit',e=>{
-e.preventDefault();notice.className='hidden';
-if(!form.reportValidity())return;
-const files=Array.from(imageInput.files||[]);if(files.length<1||files.length>2){notice.textContent='Please upload at least 1 and no more than 2 images.';notice.className='block rounded-xl bg-red-50 px-3 py-2.5 text-xs font-semibold text-red-700';return;}
-if(!/^92\d{10}$/.test(document.getElementById('whatsappNumber').value)||!/^92\d{10}$/.test(document.getElementById('phoneNumber').value)){notice.textContent='Both phone numbers must contain 12 digits and start with 92.';notice.className='block rounded-xl bg-red-50 px-3 py-2.5 text-xs font-semibold text-red-700';return;}
-if(!/^\d{13}$/.test(document.getElementById('providerCnic').value)){notice.textContent='CNIC must contain exactly 13 digits.';notice.className='block rounded-xl bg-red-50 px-3 py-2.5 text-xs font-semibold text-red-700';return;}
-const price=Number(document.getElementById('servicePrice').value);
-if(!Number.isInteger(price)||price<1){notice.textContent='Please enter a valid service price in PKR.';notice.className='block rounded-xl bg-red-50 px-3 py-2.5 text-xs font-semibold text-red-700';return;}
-const chargingTypes=Array.from(document.querySelectorAll('input[name="chargingType"]:checked')).map(input=>input.value);
-if(chargingTypes.length===0){notice.textContent='Please select at least one charging type.';notice.className='block rounded-xl bg-red-50 px-3 py-2.5 text-xs font-semibold text-red-700';return;}
-const service={id:'SRV-'+Date.now(),name:document.getElementById('serviceName').value.trim(),category:document.getElementById('serviceCategory').value,pricePKR:price,chargingTypes:chargingTypes,whatsapp:document.getElementById('whatsappNumber').value,phone:document.getElementById('phoneNumber').value,region:document.getElementById('serviceRegion').value,address:document.getElementById('serviceAddress').value.trim(),imageNames:files.map(f=>f.name),status:'Pending admin verification',submittedAt:new Date().toISOString()};
-let services=[];try{services=JSON.parse(localStorage.getItem(serviceKey))||[];}catch(_){}
-services.push(service);localStorage.setItem(serviceKey,JSON.stringify(services));
-// CNIC is validated but deliberately not saved in browser storage.
-notice.textContent='Service submitted for admin verification. It will not be visible publicly until approved.';notice.className='block rounded-xl bg-emerald-50 border border-emerald-100 px-3 py-2.5 text-xs font-semibold text-emerald-800';
-form.reset();preview.innerHTML='';setTimeout(()=>{closeModal();notice.className='hidden';},2200);
-});
-render();
-})();
-</script>
+document.addEventListener('gbbooking:authenticated',e=>{if(e.detail?.profile?.role==='provider')load().catch(err=>note(err.message,true));});
+load().catch(err=>{$('providerConnectionStatus').textContent='Connection error';note(err.message,true);});
+})();</script>
 </body>
 </html>

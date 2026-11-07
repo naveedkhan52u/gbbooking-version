@@ -130,7 +130,7 @@ document.addEventListener("gbbooking:authenticated",event=>{
   }).join(""):empty("No provider accounts have been registered yet.");
  }
  function renderDeletionRequests(){
-  const rows=state.deletionRequests;
+  const rows=state.deletionRequests.filter(r=>r.status==="pending"||r.status==="rejected");
   byId("deletionRequestLabel").textContent=rows.length+" requests";
   if(!rows.length){byId("deletionRequestList").innerHTML=empty("No provider deletion requests.");return;}
   byId("deletionRequestList").innerHTML=rows.map(r=>{
@@ -219,14 +219,15 @@ document.addEventListener("gbbooking:authenticated",event=>{
   button.disabled=true;button.classList.add("opacity-60");
   try{
    const sb=client();
-   if(approve&&request.service_id){
-    const del=await sb.from("provider_services").delete().eq("id",request.service_id).eq("provider_id",request.provider_id).select("id").maybeSingle();
-    if(del.error)throw del.error;
-    if(!del.data)throw new Error("The service was not deleted. It may already have been removed or is not owned by this provider.");
+   if(approve){
+    const result=await sb.rpc("admin_confirm_service_deletion",{p_request_id:id});
+    if(result.error)throw result.error;
+    if(result.data!==true)throw new Error("The service deletion was not confirmed.");
+   }else{
+    const update=await sb.from("provider_service_deletion_requests").update({status:"rejected",reviewed_at:new Date().toISOString()}).eq("id",id).eq("status","pending").select("id").maybeSingle();
+    if(update.error)throw update.error;
+    if(!update.data)throw new Error("Request status was not updated. Refresh and check the request.");
    }
-   const update=await sb.from("provider_service_deletion_requests").update({status:approve?"approved":"rejected",reviewed_at:new Date().toISOString()}).eq("id",id).eq("status","pending").select("id").maybeSingle();
-   if(update.error)throw update.error;
-   if(!update.data)throw new Error("Request status was not updated. Refresh and check the request.");
    await loadDashboard();
    alert(approve?"Deletion request confirmed. The service has been permanently deleted.":"Deletion request rejected. The service remains.");
   }catch(error){

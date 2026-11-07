@@ -31,6 +31,7 @@ body{font-family:Inter,sans-serif}.admin-card{background:#fff;border:1px solid #
 <a class="admin-nav-link" href="#new-services"><i class="fa-solid fa-clipboard-check w-4"></i> New Services</a>
 <a class="admin-nav-link" href="#registered-providers"><i class="fa-solid fa-users w-4"></i> Registered Providers</a>
 <a class="admin-nav-link" href="#approved-services"><i class="fa-solid fa-circle-check w-4"></i> Approved Services</a>
+<a class="admin-nav-link" href="#service-deletion-requests"><i class="fa-solid fa-trash-can w-4"></i> Request of Leave</a>
 <a class="admin-nav-link" href="#bookings"><i class="fa-solid fa-calendar-check w-4"></i> Bookings</a>
 </nav>
 <div class="mt-4 border-t border-gray-100 pt-3 px-3"><p class="text-[10px] leading-4 text-gray-400">Provider and service records are loaded directly from Supabase.</p></div>
@@ -55,6 +56,11 @@ body{font-family:Inter,sans-serif}.admin-card{background:#fff;border:1px solid #
 <section id="registered-providers" class="section-anchor">
 <div class="flex items-end justify-between gap-3 mb-4"><div><h2 class="text-lg sm:text-xl font-extrabold text-gray-900">Registered Providers</h2><p class="text-xs text-gray-500 mt-1">Provider accounts and business information registered on GBbooking.</p></div><span id="providerLabel" class="text-xs font-bold text-gray-500">— providers</span></div>
 <div id="providerList" class="grid xl:grid-cols-2 gap-4"><div class="admin-card p-6 text-sm text-gray-400">Loading registered providers…</div></div>
+</section>
+
+<section id="service-deletion-requests" class="section-anchor">
+<div class="flex items-end justify-between gap-3 mb-4"><div><h2 class="text-lg sm:text-xl font-extrabold text-gray-900">Request of Leave</h2><p class="text-xs text-gray-500 mt-1">Review provider requests to permanently remove service listings. Confirm only after checking the request.</p></div><span id="deletionRequestLabel" class="text-xs font-bold text-gray-500">— requests</span></div>
+<div id="deletionRequestList" class="grid xl:grid-cols-2 gap-4"><div class="admin-card p-6 text-sm text-gray-400">Loading deletion requests…</div></div>
 </section>
 
 <section id="approved-services" class="section-anchor">
@@ -85,7 +91,7 @@ document.addEventListener("gbbooking:authenticated",event=>{
 (function(){
  const client=()=>window.GBAuth?.client;
  const byId=id=>document.getElementById(id);
- let state={providers:[],profiles:[],services:[],bookings:[]};
+ let state={providers:[],profiles:[],services:[],bookings:[],deletionRequests:[]};
  const esc=value=>String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
  const money=(amount,currency="PKR")=>currency+" "+Number(amount||0).toLocaleString("en-PK",{maximumFractionDigits:2});
  const date=value=>{if(!value)return "Not provided";const d=new Date(value);return Number.isNaN(d.getTime())?"Not provided":d.toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"});};
@@ -123,6 +129,21 @@ document.addEventListener("gbbooking:authenticated",event=>{
    return '<article class="admin-card p-4 sm:p-5"><div class="flex items-start justify-between gap-3"><div class="min-w-0"><h3 class="text-base font-extrabold text-gray-900">'+esc(provider.business_name||"Business name not provided")+'</h3><p class="mt-1 text-xs text-gray-500">'+esc(profile.full_name||"Provider account")+'</p></div><span class="status '+(provider.verification_status==="verified"?"status-approved":"status-pending")+'">'+esc(provider.verification_status||"pending")+'</span></div><div class="grid sm:grid-cols-2 gap-3 mt-4 border-t border-gray-100 pt-3"><div><p class="muted-label">Provider account ID</p><p class="mt-1 text-[10px] font-semibold text-gray-700 break-all">'+esc(provider.user_id)+'</p></div><div><p class="muted-label">Phone</p><p class="mt-1 text-xs font-semibold text-gray-700">'+esc(provider.business_phone||profile.phone||"Not provided")+'</p></div><div><p class="muted-label">WhatsApp</p><p class="mt-1 text-xs font-semibold text-gray-700">'+esc(provider.whatsapp_number||"Not provided")+'</p></div><div><p class="muted-label">Business location</p><p class="mt-1 text-xs font-semibold text-gray-700">'+esc(location)+'</p></div><div><p class="muted-label">Registered</p><p class="mt-1 text-xs font-semibold text-gray-700">'+esc(date(provider.created_at))+'</p></div><div><p class="muted-label">Services</p><p class="mt-1 text-xs font-semibold text-gray-700">'+approved.length+' approved · '+all.filter(s=>s.status==="pending_review").length+' pending</p></div></div><div class="mt-4 border-t border-gray-100 pt-3"><p class="text-xs font-extrabold text-gray-800 mb-2">Approved services</p>'+(approved.length?'<ul class="space-y-2">'+approved.map(s=>'<li class="flex items-start justify-between gap-3 text-xs"><span class="font-semibold text-gray-700">'+esc(s.title)+' <span class="text-gray-400">('+esc(s.category)+')</span></span><span class="text-gray-500 whitespace-nowrap">'+esc(money(s.price_amount,s.currency||"PKR"))+'</span></li>').join("")+'</ul>':'<p class="text-xs text-gray-400">No approved active services yet.</p>')+'</div></article>';
   }).join(""):empty("No provider accounts have been registered yet.");
  }
+ function renderDeletionRequests(){
+  const rows=state.deletionRequests;
+  byId("deletionRequestLabel").textContent=rows.length+" requests";
+  if(!rows.length){byId("deletionRequestList").innerHTML=empty("No provider deletion requests.");return;}
+  byId("deletionRequestList").innerHTML=rows.map(r=>{
+   const profile=profileMap().get(r.provider_id)||{};
+   const business=providerMap().get(r.provider_id)||{};
+   const pending=r.status==="pending";
+   const status=r.status==="approved"?"Approved — service deleted":r.status==="rejected"?"Rejected":"Pending admin confirmation";
+   const color=r.status==="approved"?"status-approved":r.status==="rejected"?"status-rejected":"status-pending";
+   const price=r.service_price==null?"Not provided":money(r.service_price,"PKR")+(r.service_price_unit?" / "+r.service_price_unit:"");
+   const action=pending?'<div class="flex flex-wrap gap-2 mt-4 border-t border-gray-100 pt-3"><button type="button" class="action-btn bg-red-600 hover:bg-red-700 text-white" data-deletion-confirm="'+esc(r.id)+'"><i class="fa-solid fa-trash-can"></i> Confirm & Delete Service</button><button type="button" class="action-btn border border-gray-200 text-gray-600 hover:bg-gray-50" data-deletion-reject="'+esc(r.id)+'">Reject Request</button></div>':"";
+   return '<article class="admin-card p-4 sm:p-5"><div class="flex items-start justify-between gap-3"><div><p class="muted-label">Provider deletion request</p><h3 class="mt-1 text-base font-extrabold text-gray-900">'+esc(r.service_title)+'</h3><p class="mt-1 text-xs text-gray-500">'+esc(r.service_category||"Service")+'</p></div><span class="status '+color+'">'+esc(status)+'</span></div><div class="grid sm:grid-cols-2 gap-3 mt-4 border-t border-gray-100 pt-3"><div><p class="muted-label">Provider</p><p class="mt-1 text-xs font-semibold text-gray-700">'+esc(profile.full_name||business.business_name||"Provider")+'</p></div><div><p class="muted-label">Provider ID</p><p class="mt-1 text-[10px] break-all text-gray-500">'+esc(r.provider_id)+'</p></div><div><p class="muted-label">Location</p><p class="mt-1 text-xs font-semibold text-gray-700">'+esc([r.service_address,r.service_region].filter(Boolean).join(", ")||"Not provided")+'</p></div><div><p class="muted-label">Service price</p><p class="mt-1 text-xs font-semibold text-gray-700">'+esc(price)+'</p></div><div><p class="muted-label">Requested</p><p class="mt-1 text-xs font-semibold text-gray-700">'+esc(date(r.requested_at))+'</p></div><div><p class="muted-label">Service record</p><p class="mt-1 text-xs font-semibold text-gray-700">'+(r.service_id?"Still exists":"Already removed")+'</p></div></div>'+action+'</article>';
+  }).join("");
+ }
  function renderApproved(){
   const items=state.services.filter(s=>s.status==="approved"&&s.is_active);
   byId("approvedLabel").textContent=items.length+" services";
@@ -146,19 +167,21 @@ document.addEventListener("gbbooking:authenticated",event=>{
    const results=await Promise.all([
     sb.from("provider_profiles").select("user_id,business_name,description,business_phone,whatsapp_number,region,city,address,verification_status,created_at").order("created_at",{ascending:false}),
     sb.from("provider_services").select("id,provider_id,title,category,description,region,city,address,phone,whatsapp_number,price_amount,price_unit,currency,status,is_active,created_at").order("created_at",{ascending:false}),
-    sb.from("bookings").select("id,status,amount,currency,scheduled_for,created_at,service_id").order("created_at",{ascending:false}).limit(50)
+    sb.from("bookings").select("id,status,amount,currency,scheduled_for,created_at,service_id").order("created_at",{ascending:false}).limit(50),
+    sb.from("provider_service_deletion_requests").select("*").order("requested_at",{ascending:false})
    ]);
    for(const result of results)if(result.error)throw result.error;
    state.providers=results[0].data||[];
    state.services=results[1].data||[];
    state.bookings=results[2].data||[];
+   state.deletionRequests=results[3].data||[];
    const ids=[...new Set(state.providers.map(p=>p.user_id).concat(state.services.map(s=>s.provider_id)))];
    if(ids.length){
     const profiles=await sb.from("profiles").select("id,full_name,phone,location,created_at").in("id",ids);
     if(profiles.error)throw profiles.error;
     state.profiles=profiles.data||[];
    }else state.profiles=[];
-   renderPending();renderProviders();renderApproved();renderBookings();
+   renderPending();renderProviders();renderApproved();renderBookings();renderDeletionRequests();
    byId("lastUpdated").textContent="Last updated: "+new Date().toLocaleString();
   }catch(error){
    console.error("[GBbooking Admin]",error);
@@ -188,9 +211,37 @@ document.addEventListener("gbbooking:authenticated",event=>{
    button.disabled=false;button.classList.remove("opacity-60");
   }
  }
+ async function reviewDeletionRequest(id,approve,button){
+  const request=state.deletionRequests.find(r=>r.id===id);
+  if(!request||request.status!=="pending")return;
+  const question=approve?"Permanently delete this service? This cannot be undone. Booking history will be preserved.":"Reject this deletion request?";
+  if(!confirm(question))return;
+  button.disabled=true;button.classList.add("opacity-60");
+  try{
+   const sb=client();
+   if(approve&&request.service_id){
+    const del=await sb.from("provider_services").delete().eq("id",request.service_id).eq("provider_id",request.provider_id).select("id").maybeSingle();
+    if(del.error)throw del.error;
+    if(!del.data)throw new Error("The service was not deleted. It may already have been removed or is not owned by this provider.");
+   }
+   const update=await sb.from("provider_service_deletion_requests").update({status:approve?"approved":"rejected",reviewed_at:new Date().toISOString()}).eq("id",id).eq("status","pending").select("id").maybeSingle();
+   if(update.error)throw update.error;
+   if(!update.data)throw new Error("Request status was not updated. Refresh and check the request.");
+   await loadDashboard();
+   alert(approve?"Deletion request confirmed. The service has been permanently deleted.":"Deletion request rejected. The service remains.");
+  }catch(error){
+   console.error("[GBbooking Admin] Deletion request review failed",error);
+   showError("Could not process deletion request: "+(error.message||"Unknown error"));
+   button.disabled=false;button.classList.remove("opacity-60");
+  }
+ }
  document.addEventListener("click",event=>{
   const button=event.target.closest("[data-service-action]");
   if(button)updateService(button.dataset.serviceId,button.dataset.serviceAction,button);
+  const deletionConfirm=event.target.closest("[data-deletion-confirm]");
+  if(deletionConfirm)reviewDeletionRequest(deletionConfirm.dataset.deletionConfirm,true,deletionConfirm);
+  const deletionReject=event.target.closest("[data-deletion-reject]");
+  if(deletionReject)reviewDeletionRequest(deletionReject.dataset.deletionReject,false,deletionReject);
   const nav=event.target.closest(".admin-nav-link");
   if(nav){document.querySelectorAll(".admin-nav-link").forEach(link=>link.classList.remove("active"));nav.classList.add("active");}
  });

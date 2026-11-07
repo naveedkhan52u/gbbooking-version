@@ -62,6 +62,11 @@ body{font-family:Inter,sans-serif}.provider-card{background:#fff;border:1px soli
 </div>
 <form id="serviceForm" class="p-5 sm:p-6 space-y-4">
 <div class="rounded-xl border border-blue-100 bg-blue-50 p-3 text-xs leading-5 text-blue-800"><i class="fa-solid fa-shield-halved mr-1"></i> Your service will remain unpublished until an admin reviews and approves it.</div>
+<div>
+<label class="field-label" for="providerCnic">CNIC Number <span class="text-red-500">*</span></label>
+<input class="field" id="providerCnic" name="cnic" type="text" inputmode="numeric" autocomplete="off" pattern="[0-9]{13}" minlength="13" maxlength="13" required placeholder="13 digits without dashes" aria-describedby="cnicHelp">
+<p id="cnicHelp" class="mt-1 text-[10px] text-gray-400">Required for provider verification. Enter exactly 13 digits without dashes or spaces.</p>
+</div>
 <div><label class="field-label" for="serviceName">Name of Service <span class="text-red-500">*</span></label><input class="field" id="serviceName" name="serviceName" required maxlength="100" placeholder="e.g. Home Electrical Repair"></div>
 <div><label class="field-label" for="serviceCategory">Service Category <span class="text-red-500">*</span></label><select class="field" id="serviceCategory" name="serviceCategory" required><option value="">Choose a category</option><optgroup label="Accommodation"><option>Hotels & Resorts</option><option>Guest Houses</option><option>Student Hostels</option><option>Rooms & Short Stays</option></optgroup><optgroup label="Transport & Rentals"><option>Car Rentals</option><option>4x4 Jeep Rentals</option><option>Airport & Private Transfers</option><option>Local Transport</option></optgroup><optgroup label="Tours & Experiences"><option>Tour Packages</option><option>Trekking & Hiking Guides</option><option>Local Guides</option><option>Sightseeing & Experiences</option></optgroup><optgroup label="Events & Venues"><option>Wedding Halls</option><option>Event Venues & Marquees</option><option>Meeting & Conference Spaces</option></optgroup><optgroup label="Home Services"><option>Plumbing Services</option><option>Electrical Work</option><option>Home Repair & Maintenance</option><option>Cleaning Services</option><option>Painting Services</option><option>Other Household Services</option></optgroup></select></div>
 <div class="grid sm:grid-cols-2 gap-3">
@@ -137,6 +142,10 @@ const price=Number($('servicePrice').value),types=[...document.querySelectorAll(
 if(!Number.isInteger(price)||price<1||!types.length){formNote('Enter a valid price and select a charging type.',true);return;}
 const phone=$('phoneNumber').value,wa=$('whatsappNumber').value;
 if(!/^92\d{10}$/.test(phone)||!/^92\d{10}$/.test(wa)){formNote('Both phone numbers must be 12 digits starting with 92.',true);return;}
+const cnic=$('providerCnic').value.trim();
+if(!/^[0-9]{13}$/.test(cnic)){formNote('CNIC must contain exactly 13 digits without dashes or spaces.',true);$('providerCnic').focus();return;}
+const {error:cnicError}=await db.from('provider_identity_verifications').upsert({user_id:me.id,cnic},{onConflict:'user_id'});
+if(cnicError)throw cnicError;
 const payload={provider_id:me.id,title:$('serviceName').value.trim(),category:$('serviceCategory').value,description:$('serviceDescription').value.trim()||null,region:$('serviceRegion').value,city:$('serviceRegion').value,address:$('serviceAddress').value.trim(),phone,whatsapp_number:wa,price_amount:price,price_unit:types.join(', ').toLowerCase(),currency:'PKR',status:'pending_review',is_active:true};
 const btn=form.querySelector('button[type="submit"]');btn.disabled=true;btn.textContent='Submitting...';
 try{const {error}=await db.from('provider_services').insert(payload);if(error)throw error;formNote('Service submitted. It is waiting for admin approval.');form.reset();await load();setTimeout(close,1300);}

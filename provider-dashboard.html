@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/shared-layout.css?v=20261101-provider">
 <style>
-body{font-family:Inter,sans-serif}.provider-card{background:#fff;border:1px solid #e5e7eb;border-radius:1rem;box-shadow:0 2px 8px rgb(15 23 42 / .03)}.metric-icon{width:2.75rem;height:2.75rem;display:flex;align-items:center;justify-content:center;border-radius:.9rem;flex-shrink:0}.booking-status{display:inline-flex;align-items:center;gap:.35rem;padding:.35rem .65rem;border-radius:999px;font-size:.68rem;font-weight:800}.pending{background:#fff7ed;color:#c2410c}.confirmed{background:#eff6ff;color:#1d4ed8}.completed{background:#ecfdf5;color:#047857}.cancelled{background:#fef2f2;color:#b91c1c}.field{width:100%;border:1px solid #d1d5db;border-radius:.7rem;background:#fff;padding:.7rem .8rem;font-size:.875rem;color:#1f2937;outline:none}.field:focus{border-color:#0056b3;box-shadow:0 0 0 3px rgb(0 86 179 / .1)}.field-label{display:block;font-size:.75rem;font-weight:700;color:#374151;margin-bottom:.4rem}.action-btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border-radius:.65rem;padding:.6rem .85rem;font-size:.75rem;font-weight:800;transition:.15s}.modal-backdrop{background:rgb(15 23 42 / .58);backdrop-filter:blur(3px)}.image-preview{width:4.5rem;height:4.5rem;border:1px solid #e5e7eb;border-radius:.7rem;object-fit:cover}
+body{font-family:Inter,sans-serif}.provider-card{background:#fff;border:1px solid #e5e7eb;border-radius:1rem;box-shadow:0 2px 8px rgb(15 23 42 / .03)}.metric-icon{width:2.75rem;height:2.75rem;display:flex;align-items:center;justify-content:center;border-radius:.9rem;flex-shrink:0}.booking-status{display:inline-flex;align-items:center;gap:.35rem;padding:.35rem .65rem;border-radius:999px;font-size:.68rem;font-weight:800}.pending{background:#fff7ed;color:#c2410c}.confirmed{background:#eff6ff;color:#1d4ed8}.completed{background:#ecfdf5;color:#047857}.cancelled{background:#fef2f2;color:#b91c1c}.field{width:100%;border:1px solid #d1d5db;border-radius:.7rem;background:#fff;padding:.7rem .8rem;font-size:.875rem;color:#1f2937;outline:none}.field:focus{border-color:#0056b3;box-shadow:0 0 0 3px rgb(0 86 179 / .1)}.field-label{display:block;font-size:.75rem;font-weight:700;color:#374151;margin-bottom:.4rem}.action-btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border-radius:.65rem;padding:.6rem .85rem;font-size:.75rem;font-weight:800;transition:.15s}.modal-backdrop{background:rgb(15 23 42 / .58);backdrop-filter:blur(3px)}.image-preview{width:100%;height:7rem;border:1px solid #e5e7eb;border-radius:.7rem;object-fit:cover}
 </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen">
@@ -84,7 +84,12 @@ body{font-family:Inter,sans-serif}.provider-card{background:#fff;border:1px soli
 <label class="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-3 text-xs font-semibold text-gray-700 cursor-pointer hover:border-blue-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"><input class="charging-type accent-blue-600" type="checkbox" name="chargingType" value="Per Night"><span>Per Night</span></label>
 <label class="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-3 text-xs font-semibold text-gray-700 cursor-pointer hover:border-blue-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"><input class="charging-type accent-blue-600" type="checkbox" name="chargingType" value="Per Month"><span>Per Month</span></label>
 </div><p class="mt-1 text-[10px] text-gray-400">Choose the applicable charging type(s) for this service.</p></div>
-<div><label class="field-label" for="serviceDescription">Service Description</label><textarea class="field" id="serviceDescription" rows="3" maxlength="1500" placeholder="Describe your service"></textarea></div><p class="text-[11px] text-gray-500">Service image uploads will be enabled after Storage is configured.</p>
+<div><label class="field-label" for="serviceDescription">Service Description</label><textarea class="field" id="serviceDescription" rows="3" maxlength="1500" placeholder="Describe your service"></textarea></div><div class="rounded-xl border border-gray-200 p-4 space-y-3">
+ <div><label class="field-label" for="serviceImages">Service Images <span class="text-red-500">*</span></label><p class="text-[11px] text-gray-500">Upload at least 1 and no more than 2 clear service photos. Images are automatically compressed to less than 100 KB each (maximum 200 KB combined).</p></div>
+ <input class="field" id="serviceImages" name="serviceImages" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+ <p id="serviceImageStatus" class="text-[11px] text-gray-500">JPG, PNG or WebP. Maximum 2 images.</p>
+ <div id="serviceImagePreview" class="grid grid-cols-2 gap-3"></div>
+</div>
 <div id="serviceFormNotice" class="hidden rounded-xl px-3 py-2.5 text-xs font-semibold" role="status"></div>
 <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-gray-100 pt-4">
 <button id="cancelServiceForm" type="button" class="action-btn border border-gray-200 text-gray-600 hover:bg-gray-50">Cancel</button>
@@ -103,7 +108,7 @@ body{font-family:Inter,sans-serif}.provider-card{background:#fff;border:1px soli
 <script>
 (function(){
 const db=window.GBAuth?.client,$=id=>document.getElementById(id);
-let me=null,services=[],bookings=[],deletionRequests=[],editingServiceId=null;
+let me=null,services=[],bookings=[],deletionRequests=[],editingServiceId=null,selectedServiceImages=[],existingServiceImageUrls=[],previewObjectUrls=[];
 const cash=n=>'PKR '+Number(n||0).toLocaleString('en-PK');
 const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function note(t,bad=false){$('providerDashboardNotice').textContent=t;$('providerDashboardNotice').className='mt-8 text-center text-[11px] '+(bad?'text-red-600':'text-gray-500');}
@@ -113,7 +118,7 @@ function renderServices(){
 $('myServicesCount').textContent=services.length+' services';$('myServicesEmpty').classList.toggle('hidden',services.length>0);
 $('myServices').innerHTML=services.map(s=>{
 const pending=deletionRequests.some(r=>r.service_id===s.id&&r.status==='pending');
-return '<article class="provider-card p-4"><div class="flex justify-between gap-3"><div class="min-w-0"><h3 class="font-extrabold text-sm">'+safe(s.title)+'</h3><p class="text-xs text-gray-500 mt-1">'+safe(s.category)+' · '+safe(s.region||s.city||'')+'</p></div><div class="flex items-start gap-2"><span class="booking-status '+badge(s.status)+'">'+safe(String(s.status).replaceAll('_',' '))+'</span><details class="relative"><summary class="list-none cursor-pointer rounded-lg border border-gray-200 px-2 py-1 text-gray-600 hover:bg-gray-50" aria-label="Service actions"><i class="fa-solid fa-ellipsis-vertical"></i></summary><div class="absolute right-0 z-20 mt-1 w-44 rounded-xl border border-gray-200 bg-white p-1 shadow-xl"><button type="button" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-gray-700 hover:bg-gray-50" data-service-edit="'+safe(s.id)+'"><i class="fa-regular fa-pen-to-square"></i> Edit service</button><button type="button" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold '+(pending?'text-gray-400':'text-red-600 hover:bg-red-50')+'" data-service-delete-request="'+safe(s.id)+'" '+(pending?'disabled':'')+'><i class="fa-regular fa-trash-can"></i> '+(pending?'Deletion requested':'Request deletion')+'</button></div></details></div></div><div class="mt-3 border-t pt-3 text-sm font-extrabold">'+cash(s.price_amount)+' <span class="text-xs font-normal text-gray-500">/ '+safe(s.price_unit)+'</span></div>'+(pending?'<p class="mt-2 text-xs font-semibold text-amber-700">Deletion request is waiting for admin confirmation.</p>':'')+'</article>';
+return '<article class="provider-card p-4">'+(Array.isArray(s.image_urls)&&s.image_urls.length?'<div class="mb-3 grid grid-cols-2 gap-2">'+s.image_urls.slice(0,2).map(url=>'<img src="'+safe(url)+'" alt="'+safe(s.title)+' service photo" class="h-32 w-full rounded-lg border border-gray-100 object-cover" loading="lazy">').join('')+'</div>':'')+'<div class="flex justify-between gap-3"><div class="min-w-0"><h3 class="font-extrabold text-sm">'+safe(s.title)+'</h3><p class="text-xs text-gray-500 mt-1">'+safe(s.category)+' · '+safe(s.region||s.city||'')+'</p></div><div class="flex items-start gap-2"><span class="booking-status '+badge(s.status)+'">'+safe(String(s.status).replaceAll('_',' '))+'</span><details class="relative"><summary class="list-none cursor-pointer rounded-lg border border-gray-200 px-2 py-1 text-gray-600 hover:bg-gray-50" aria-label="Service actions"><i class="fa-solid fa-ellipsis-vertical"></i></summary><div class="absolute right-0 z-20 mt-1 w-44 rounded-xl border border-gray-200 bg-white p-1 shadow-xl"><button type="button" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-gray-700 hover:bg-gray-50" data-service-edit="'+safe(s.id)+'"><i class="fa-regular fa-pen-to-square"></i> Edit service</button><button type="button" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold '+(pending?'text-gray-400':'text-red-600 hover:bg-red-50')+'" data-service-delete-request="'+safe(s.id)+'" '+(pending?'disabled':'')+'><i class="fa-regular fa-trash-can"></i> '+(pending?'Deletion requested':'Request deletion')+'</button></div></details></div></div><div class="mt-3 border-t pt-3 text-sm font-extrabold">'+cash(s.price_amount)+' <span class="text-xs font-normal text-gray-500">/ '+safe(s.price_unit)+'</span></div>'+(pending?'<p class="mt-2 text-xs font-semibold text-amber-700">Deletion request is waiting for admin confirmation.</p>':'')+'</article>';
 }).join('');
 }
 function renderDeletionRequests(){
@@ -149,8 +154,67 @@ $('providerConnectionStatus').textContent='Live Supabase';$('providerConnectionS
 const modal=$('serviceModal'),form=$('serviceForm');
 const cnicWrap=$('providerCnic').parentElement;
 const submitButton=form.querySelector('button[type="submit"]');
+const imageInput=$('serviceImages'),imagePreview=$('serviceImagePreview'),imageStatus=$('serviceImageStatus');
+const MAX_IMAGE_BYTES=100*1024;
+function revokeImagePreviews(){previewObjectUrls.forEach(url=>URL.revokeObjectURL(url));previewObjectUrls=[];}
+function renderImagePreviews(){
+ revokeImagePreviews();
+ const items=[];
+ existingServiceImageUrls.forEach((url,i)=>items.push({url,kind:'Existing image '+(i+1)}));
+ selectedServiceImages.forEach((file,i)=>{const url=URL.createObjectURL(file);previewObjectUrls.push(url);items.push({url,kind:'Compressed image '+(i+1)+' · '+(file.size/1024).toFixed(1)+' KB'});});
+ imagePreview.innerHTML=items.map(item=>'<div><img class="image-preview" src="'+safe(item.url)+'" alt="'+safe(item.kind)+'"><p class="mt-1 text-[10px] text-gray-500">'+safe(item.kind)+'</p></div>').join('');
+}
+function compressServiceImage(file,index){
+ return new Promise(async(resolve,reject)=>{
+  try{
+   if(!file.type.match(/^image\/(jpeg|png|webp)$/))throw new Error('Use JPG, PNG or WebP images only.');
+   if(file.size>15*1024*1024)throw new Error('Each original image must be smaller than 15 MB before compression.');
+   const bitmap=await createImageBitmap(file);
+   let scale=Math.min(1,1600/Math.max(bitmap.width,bitmap.height));
+   let quality=.84,blob=null;
+   for(let attempt=0;attempt<18;attempt++){
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+    const ctx=canvas.getContext('2d',{alpha:false});ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+    blob=await new Promise(done=>canvas.toBlob(done,'image/webp',quality));
+    if(blob&&blob.size<MAX_IMAGE_BYTES){bitmap.close?.();resolve(new File([blob],'service-'+Date.now()+'-'+index+'.webp',{type:'image/webp',lastModified:Date.now()}));return;}
+    if(quality>.5)quality=Math.max(.5,quality-.08);else{scale*=.82;quality=.78;}
+   }
+   bitmap.close?.();throw new Error('This image could not be compressed below 100 KB. Please choose a smaller or simpler image.');
+  }catch(error){reject(error);}
+ });
+}
+imageInput.addEventListener('change',async()=>{
+ const files=Array.from(imageInput.files||[]);
+ if(files.length>2){imageInput.value='';selectedServiceImages=[];imageStatus.textContent='Select no more than 2 images.';renderImagePreviews();return;}
+ imageInput.disabled=true;imageStatus.textContent='Compressing images automatically…';
+ try{
+  selectedServiceImages=await Promise.all(files.map((file,index)=>compressServiceImage(file,index)));
+  const total=selectedServiceImages.reduce((sum,file)=>sum+file.size,0);
+  imageStatus.textContent=selectedServiceImages.length+' image(s) compressed · '+(total/1024).toFixed(1)+' KB total. Each image is below 100 KB.';
+  renderImagePreviews();
+ }catch(error){selectedServiceImages=[];imageInput.value='';imageStatus.textContent=error.message;renderImagePreviews();}
+ finally{imageInput.disabled=false;}
+});
+function storagePathFromUrl(url){
+ const marker='/object/public/provider-service-images/';
+ const i=String(url||'').indexOf(marker);
+ return i<0?null:decodeURIComponent(String(url).slice(i+marker.length).split('?')[0]);
+}
+async function uploadServiceImages(files){
+ const paths=[],urls=[];
+ for(const file of files){
+  const path=me.id+'/'+crypto.randomUUID()+'.webp';
+  const {error}=await db.storage.from('provider-service-images').upload(path,file,{contentType:'image/webp',cacheControl:'31536000',upsert:false});
+  if(error)throw error;
+  paths.push(path);
+  const {data}=db.storage.from('provider-service-images').getPublicUrl(path);
+  urls.push(data.publicUrl);
+ }
+ return {paths,urls};
+}
 function openModal(){modal.classList.remove('hidden');modal.classList.add('flex');document.body.style.overflow='hidden';}
-function resetServiceForm(){editingServiceId=null;form.reset();cnicWrap.classList.remove('hidden');$('providerCnic').required=true;$('serviceModalTitle').textContent='List a Service';submitButton.innerHTML='<i class="fa-solid fa-paper-plane"></i> Submit for Admin Verification';}
+function resetServiceForm(){editingServiceId=null;form.reset();selectedServiceImages=[];existingServiceImageUrls=[];revokeImagePreviews();imagePreview.innerHTML='';imageStatus.textContent='JPG, PNG or WebP. Maximum 2 images.';imageInput.disabled=false;cnicWrap.classList.remove('hidden');$('providerCnic').required=true;$('serviceModalTitle').textContent='List a Service';submitButton.innerHTML='<i class="fa-solid fa-paper-plane"></i> Submit for Admin Verification';}
 function close(){modal.classList.add('hidden');modal.classList.remove('flex');document.body.style.overflow='';resetServiceForm();}
 $('openServiceForm').addEventListener('click',()=>{resetServiceForm();openModal();});
 $('closeServiceForm').addEventListener('click',close);$('cancelServiceForm').addEventListener('click',close);modal.addEventListener('click',e=>{if(e.target===modal)close();});
@@ -160,29 +224,43 @@ const price=Number($('servicePrice').value),types=[...document.querySelectorAll(
 if(!Number.isInteger(price)||price<1||!types.length){formNote('Enter a valid price and select a charging type.',true);return;}
 const phone=$('phoneNumber').value,wa=$('whatsappNumber').value;
 if(!/^92\d{10}$/.test(phone)||!/^92\d{10}$/.test(wa)){formNote('Both phone numbers must be 12 digits starting with 92.',true);return;}
+if(selectedServiceImages.length>2||(!selectedServiceImages.length&&!existingServiceImageUrls.length)){formNote('Upload at least 1 and no more than 2 service images.',true);return;}
+if(selectedServiceImages.some(file=>file.size>=MAX_IMAGE_BYTES)||selectedServiceImages.reduce((sum,file)=>sum+file.size,0)>=200*1024){formNote('Images must be below 100 KB each and below 200 KB combined.',true);return;}
 const payload={provider_id:me.id,title:$('serviceName').value.trim(),category:$('serviceCategory').value,description:$('serviceDescription').value.trim()||null,region:$('serviceRegion').value,city:$('serviceRegion').value,address:$('serviceAddress').value.trim(),phone,whatsapp_number:wa,price_amount:price,price_unit:types.join(', ').toLowerCase(),currency:'PKR'};
 const btn=submitButton;btn.disabled=true;btn.textContent=editingServiceId?'Saving changes...':'Submitting...';
+let uploadedPaths=[],oldImagePaths=[];
 try{
+ let imageUrls=existingServiceImageUrls.slice();
+ if(selectedServiceImages.length){
+  const uploaded=await uploadServiceImages(selectedServiceImages);
+  uploadedPaths=uploaded.paths;imageUrls=uploaded.urls;
+  oldImagePaths=existingServiceImageUrls.map(storagePathFromUrl).filter(Boolean);
+ }
+ payload.image_urls=imageUrls;
  if(editingServiceId){
   const {data,error}=await db.from('provider_services').update(payload).eq('id',editingServiceId).eq('provider_id',me.id).select('id').maybeSingle();
   if(error)throw error;if(!data)throw new Error('Service not found or you do not have permission to edit it.');
-  formNote('Service details updated successfully.');
+  if(oldImagePaths.length){const removed=await db.storage.from('provider-service-images').remove(oldImagePaths);if(removed.error)console.warn('Old service images could not be removed:',removed.error.message);}
+  formNote('Service details and images updated successfully.');
  }else{
   const cnic=$('providerCnic').value.trim();
   if(!/^[0-9]{13}$/.test(cnic))throw new Error('CNIC must contain exactly 13 digits without dashes or spaces.');
   const {error:cnicError}=await db.from('provider_identity_verifications').upsert({user_id:me.id,cnic},{onConflict:'user_id'});if(cnicError)throw cnicError;
   const {error}=await db.from('provider_services').insert({...payload,status:'pending_review',is_active:true});if(error)throw error;
-  formNote('Service submitted. It is waiting for admin approval.');
+  formNote('Service and images submitted. Waiting for admin approval.');
  }
- await load();setTimeout(close,1100);
-}catch(err){formNote(err.message||'Service submission failed.',true);}
-finally{btn.disabled=false;btn.innerHTML=editingServiceId?'<i class="fa-solid fa-floppy-disk"></i> Save Changes':'<i class="fa-solid fa-paper-plane"></i> Submit for Admin Verification';}
+ uploadedPaths=[];
+ await load();setTimeout(close,1200);
+}catch(err){
+ if(uploadedPaths.length){const cleanup=await db.storage.from('provider-service-images').remove(uploadedPaths);if(cleanup.error)console.warn('Temporary service images cleanup failed:',cleanup.error.message);}
+ formNote(err.message||'Service submission failed.',true);
+}finally{btn.disabled=false;btn.innerHTML=editingServiceId?'<i class="fa-solid fa-floppy-disk"></i> Save Changes':'<i class="fa-solid fa-paper-plane"></i> Submit for Admin Verification';}
 });
 document.querySelector('main').addEventListener('click',async e=>{
 const edit=e.target.closest('[data-service-edit]');
 if(edit){
  const service=services.find(s=>s.id===edit.dataset.serviceEdit);if(!service)return;
- editingServiceId=service.id;form.reset();cnicWrap.classList.add('hidden');$('providerCnic').required=false;
+ editingServiceId=service.id;form.reset();selectedServiceImages=[];existingServiceImageUrls=Array.isArray(service.image_urls)?service.image_urls.slice(0,2):[];imageInput.value='';imageStatus.textContent='Choose 1 or 2 new images to replace the current photos, or keep the existing photos.';renderImagePreviews();cnicWrap.classList.add('hidden');$('providerCnic').required=false;
  $('serviceName').value=service.title||'';$('serviceCategory').value=service.category||'';
  $('serviceDescription').value=service.description||'';$('serviceRegion').value=service.region||service.city||'';
  $('serviceAddress').value=service.address||'';$('phoneNumber').value=service.phone||'';

@@ -206,7 +206,7 @@ document.addEventListener("gbbooking:authenticated",event=>{
    state.services=results[1].data||[];
    state.bookings=results[2].data||[];
    state.deletionRequests=results[3].data||[];
-   const ids=[...new Set(state.providers.map(p=>p.user_id).concat(state.services.map(s=>s.provider_id),state.bookings.map(b=>b.customer_id),state.bookings.map(b=>b.provider_id)))];
+   const ids=[...new Set(state.providers.map(p=>p.user_id).concat(state.services.map(s=>s.provider_id),state.bookings.map(b=>b.customer_id),state.bookings.map(b=>b.provider_id)))].filter(Boolean);
    if(ids.length){
     const profiles=await sb.from("profiles").select("id,full_name,phone,location,created_at").in("id",ids);
     if(profiles.error)throw profiles.error;

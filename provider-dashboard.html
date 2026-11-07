@@ -186,14 +186,25 @@ function compressServiceImage(file,index){
 }
 imageInput.addEventListener('change',async()=>{
  const files=Array.from(imageInput.files||[]);
- if(files.length>2){imageInput.value='';selectedServiceImages=[];imageStatus.textContent='Select no more than 2 images.';renderImagePreviews();return;}
- imageInput.disabled=true;imageStatus.textContent='Compressing images automatically…';
+ imageInput.value='';
+ if(!files.length)return;
+ if(selectedServiceImages.length+files.length>2){
+  imageStatus.textContent='Maximum 2 images allowed. You already have '+selectedServiceImages.length+' image(s); select '+(2-selectedServiceImages.length)+' more.';
+  return;
+ }
+ imageInput.disabled=true;imageStatus.textContent='Compressing selected image(s) automatically…';
  try{
-  selectedServiceImages=await Promise.all(files.map((file,index)=>compressServiceImage(file,index)));
-  const total=selectedServiceImages.reduce((sum,file)=>sum+file.size,0);
-  imageStatus.textContent=selectedServiceImages.length+' image(s) compressed · '+(total/1024).toFixed(1)+' KB total. Each image is below 100 KB.';
+  const compressed=await Promise.all(files.map((file,index)=>compressServiceImage(file,selectedServiceImages.length+index)));
+  const combined=[...selectedServiceImages,...compressed];
+  const total=combined.reduce((sum,file)=>sum+file.size,0);
+  if(total>=200*1024)throw new Error('The combined image size must be below 200 KB. Choose smaller images.');
+  selectedServiceImages=combined;
+  imageStatus.textContent=selectedServiceImages.length+' of 2 image(s) selected · '+(total/1024).toFixed(1)+' KB total. Select '+(2-selectedServiceImages.length)+' more if needed.';
   renderImagePreviews();
- }catch(error){selectedServiceImages=[];imageInput.value='';imageStatus.textContent=error.message;renderImagePreviews();}
+ }catch(error){
+  imageStatus.textContent=error.message||'Image compression failed. Please try another image.';
+  renderImagePreviews();
+ }
  finally{imageInput.disabled=false;}
 });
 function storagePathFromUrl(url){

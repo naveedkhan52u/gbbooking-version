@@ -115,7 +115,7 @@ document.addEventListener("gbbooking:authenticated",event=>{
   const location=[service.city,service.region].filter(Boolean).join(", ")||service.address||"Location not provided";
   const price=money(service.price_amount,service.currency||"PKR")+(service.price_unit?" / "+service.price_unit:"");
   const actions=withActions?'<div class="flex flex-wrap gap-2 mt-4 border-t border-gray-100 pt-3"><button type="button" class="action-btn bg-emerald-600 hover:bg-emerald-700 text-white" data-service-action="approve" data-service-id="'+esc(service.id)+'"><i class="fa-solid fa-check"></i> Approve</button><button type="button" class="action-btn border border-red-200 text-red-600 hover:bg-red-50" data-service-action="reject" data-service-id="'+esc(service.id)+'"><i class="fa-solid fa-xmark"></i> Reject</button></div>':"";
-  return '<article class="admin-card p-4 sm:p-5"><div class="flex items-start justify-between gap-3"><div class="min-w-0"><p class="muted-label">'+esc(service.category||"Service")+'</p><h3 class="mt-1 text-base font-extrabold text-gray-900">'+esc(service.title)+'</h3><p class="mt-1 text-xs text-gray-500">Provider: <span class="font-semibold text-gray-700">'+esc(providerName)+'</span></p></div><span class="status '+badge+'">'+esc(status.replaceAll("_"," "))+'</span></div><p class="mt-3 text-sm text-gray-600">'+esc(service.description||"No description supplied.")+'</p><div class="grid sm:grid-cols-2 gap-3 mt-4 border-t border-gray-100 pt-3"><div><p class="muted-label">Price</p><p class="mt-1 text-sm font-extrabold text-gray-900">'+esc(price)+'</p></div><div><p class="muted-label">Location</p><p class="mt-1 text-xs font-semibold text-gray-700">'+esc(location)+'</p></div><div><p class="muted-label">Provider contact</p><p class="mt-1 text-xs font-semibold text-gray-700">'+esc(service.phone||business.business_phone||profile.phone||"Not provided")+'</p></div><div><p class="muted-label">Submitted</p><p class="mt-1 text-xs font-semibold text-gray-700">'+esc(date(service.created_at))+'</p></div></div>'+actions+'</article>';
+  return '<article class="admin-card p-4 sm:p-5"><div class="flex items-start justify-between gap-3"><div class="min-w-0"><p class="muted-label">'+esc(service.category||"Service")+'</p><h3 class="mt-1 text-base font-extrabold text-gray-900">'+esc(service.title)+'</h3><p class="mt-1 text-xs text-gray-500">Provider: <span class="font-semibold text-gray-700">'+esc(providerName)+'</span></p></div><span class="status '+badge+'">'+esc(status.replaceAll("_"," "))+'</span></div>'+(Array.isArray(service.image_urls)&&service.image_urls.length?'<div class="mt-3 grid grid-cols-2 gap-2">'+service.image_urls.slice(0,2).map(url=>'<img src="'+esc(url)+'" alt="'+esc(service.title)+' service photo" class="h-36 w-full rounded-lg border border-gray-100 object-cover" loading="lazy">').join("")+'</div>':'')+'<p class="mt-3 text-sm text-gray-600">'+esc(service.description||"No description supplied.")+'</p><div class="grid sm:grid-cols-2 gap-3 mt-4 border-t border-gray-100 pt-3"><div><p class="muted-label">Price</p><p class="mt-1 text-sm font-extrabold text-gray-900">'+esc(price)+'</p></div><div><p class="muted-label">Location</p><p class="mt-1 text-xs font-semibold text-gray-700">'+esc(location)+'</p></div><div><p class="muted-label">Provider contact</p><p class="mt-1 text-xs font-semibold text-gray-700">'+esc(service.phone||business.business_phone||profile.phone||"Not provided")+'</p></div><div><p class="muted-label">Submitted</p><p class="mt-1 text-xs font-semibold text-gray-700">'+esc(date(service.created_at))+'</p></div></div>'+actions+'</article>';
  }
  function renderPending(){
   const items=state.services.filter(s=>s.status==="pending_review");
@@ -192,7 +192,7 @@ document.addEventListener("gbbooking:authenticated",event=>{
    const sb=client();if(!sb)throw new Error("Supabase client is not available. Refresh the page and try again.");
    const results=await Promise.all([
     sb.from("provider_profiles").select("user_id,business_name,description,business_phone,whatsapp_number,region,city,address,verification_status,created_at").order("created_at",{ascending:false}),
-    sb.from("provider_services").select("id,provider_id,title,category,description,region,city,address,phone,whatsapp_number,price_amount,price_unit,currency,status,is_active,created_at").order("created_at",{ascending:false}),
+    sb.from("provider_services").select("id,provider_id,title,category,description,region,city,address,phone,whatsapp_number,price_amount,price_unit,currency,status,is_active,image_urls,created_at").order("created_at",{ascending:false}),
     sb.from("bookings").select("id,customer_id,provider_id,service_id,scheduled_for,service_location,customer_notes,status,amount,currency,created_at").order("created_at",{ascending:false}).limit(100),
     sb.from("provider_service_deletion_requests").select("*").order("requested_at",{ascending:false})
    ]);
@@ -265,9 +265,19 @@ document.addEventListener("gbbooking:authenticated",event=>{
   try{
    const sb=client();
    if(approve){
+    const service=state.services.find(s=>s.id===request.service_id);
+    const imagePaths=(Array.isArray(service?.image_urls)?service.image_urls:[]).map(url=>{
+     const marker="/object/public/provider-service-images/";
+     const index=String(url||"").indexOf(marker);
+     return index<0?null:decodeURIComponent(String(url).slice(index+marker.length).split("?")[0]);
+    }).filter(Boolean);
     const result=await sb.rpc("admin_confirm_service_deletion",{p_request_id:id});
     if(result.error)throw result.error;
     if(result.data!==true)throw new Error("The service deletion was not confirmed.");
+    if(imagePaths.length){
+     const removed=await sb.storage.from("provider-service-images").remove(imagePaths);
+     if(removed.error)console.error("[GBbooking Admin] Deleted service images could not be removed from Storage:",removed.error);
+    }
    }else{
     const update=await sb.from("provider_service_deletion_requests").update({status:"rejected",reviewed_at:new Date().toISOString()}).eq("id",id).eq("status","pending").select("id").maybeSingle();
     if(update.error)throw update.error;

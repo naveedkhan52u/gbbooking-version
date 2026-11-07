@@ -120,8 +120,8 @@ function renderDeletionRequests(){
 $('leaveRequestCount').textContent=deletionRequests.length+' requests';
 $('leaveRequestsEmpty').classList.toggle('hidden',deletionRequests.length>0);
 $('leaveRequests').innerHTML=deletionRequests.map(r=>{
-const status=r.status==='pending'?'Pending admin review':r.status==='approved'?'Approved — service deleted':'Rejected by admin';
-const color=r.status==='pending'?'text-amber-700 bg-amber-50':r.status==='approved'?'text-emerald-700 bg-emerald-50':'text-red-700 bg-red-50';
+const status=r.status==='pending'?'Pending admin review':'Rejected by admin';
+const color=r.status==='pending'?'text-amber-700 bg-amber-50':'text-red-700 bg-red-50';
 return '<article class="provider-card p-4"><div class="flex items-start justify-between gap-3"><div><h3 class="text-sm font-extrabold">'+safe(r.service_title)+'</h3><p class="mt-1 text-xs text-gray-500">'+safe(r.service_category||'Service')+' · '+safe(r.service_region||'')+'</p></div><span class="rounded-full px-2 py-1 text-[10px] font-bold '+color+'">'+safe(status)+'</span></div><p class="mt-3 text-xs text-gray-500">Requested: '+safe(new Date(r.requested_at).toLocaleString())+'</p>'+(r.status==='pending'?'<p class="mt-2 text-xs text-gray-500">The service has not been deleted. It will remain until an administrator confirms this request.</p>':'')+'</article>';
 }).join('');
 }
@@ -142,7 +142,7 @@ const {data:u,error:ue}=await db.auth.getUser();if(ue)throw ue;if(!u.user)throw 
 const {data:p,error:pe}=await db.from('profiles').select('id,role,full_name').eq('id',u.user.id).single();if(pe)throw pe;if(p.role!=='provider')throw Error('This account is not a provider.');
 me=u.user;$('providerName').textContent=p.full_name||u.user.email;
 const sr=await db.from('provider_services').select('*').eq('provider_id',me.id).order('created_at',{ascending:false});if(sr.error)throw sr.error;services=sr.data||[];renderServices();
-const dr=await db.from('provider_service_deletion_requests').select('*').eq('provider_id',me.id).order('requested_at',{ascending:false});if(dr.error)throw dr.error;deletionRequests=dr.data||[];renderServices();renderDeletionRequests();
+const dr=await db.from('provider_service_deletion_requests').select('*').eq('provider_id',me.id).order('requested_at',{ascending:false});if(dr.error)throw dr.error;deletionRequests=(dr.data||[]).filter(r=>r.status==='pending'||r.status==='rejected');renderServices();renderDeletionRequests();
 const br=await db.from('bookings').select('id,service_id,scheduled_for,service_location,status,amount,created_at').eq('provider_id',me.id).order('created_at',{ascending:false});if(br.error)throw br.error;bookings=br.data||[];renderBookings();
 $('providerConnectionStatus').textContent='Live Supabase';$('providerConnectionStatus').className='rounded-full bg-emerald-50 text-emerald-700 px-2 py-1 text-[10px] font-bold';note('Provider dashboard connected. Your own services and bookings are loaded from Supabase.');
 }
